@@ -6,6 +6,7 @@ import { BarChart3, PieChart, LineChart, Target, TrendingUp, Gauge, FileSpreadsh
 import { HistogramTool } from "../tools/HistogramTool";
 import { ParetoChartTool } from "../tools/ParetoChartTool";
 import { GageRRTool } from "../tools/GageRRTool";
+import { AdvancedGageRRTool } from "../tools/AdvancedGageRRTool";
 
 export function MeasurePhase() {
   const tools = [
@@ -100,7 +101,7 @@ export function MeasurePhase() {
 
       {/* Active Tool Content */}
       <div className="animate-fade-in">
-        {activeTool === "gage-rr" && <GageRRTool />}
+        {activeTool === "gage-rr" && <AdvancedGageRRTool />}
         {activeTool === "histogram" && <HistogramTool />}
         {activeTool === "pareto" && <ParetoChartTool />}
         
