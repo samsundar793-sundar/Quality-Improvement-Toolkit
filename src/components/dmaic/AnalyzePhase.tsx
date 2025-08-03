@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Search, TrendingUp, BarChart, TestTube } from "lucide-react";
 import { FiveWhyTool } from "../tools/FiveWhyTool";
+import { RegressionAnalysisTool } from "../tools/RegressionAnalysisTool";
 
 export function AnalyzePhase() {
   const tools = [
@@ -19,7 +20,7 @@ export function AnalyzePhase() {
       title: "Regression Analysis",
       description: "Statistical relationship modeling",
       icon: TrendingUp,
-      status: "coming-soon"
+      status: "ready"
     },
     {
       id: "advanced-pareto",
@@ -71,15 +72,16 @@ export function AnalyzePhase() {
       {/* Active Tool Content */}
       <div className="animate-fade-in">
         {activeTool === "five-why" && <FiveWhyTool />}
+        {activeTool === "regression" && <RegressionAnalysisTool />}
         
-        {activeTool === "regression" && (
+        {activeTool === "advanced-pareto" && (
           <Card className="card-professional">
             <CardContent className="pt-6">
               <div className="text-center py-12">
-                <TrendingUp className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-foreground mb-2">Regression Analysis</h3>
+                <BarChart className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-foreground mb-2">Advanced Pareto</h3>
                 <p className="text-muted-foreground mb-4">
-                  Multiple linear regression with confidence intervals coming soon
+                  Multi-level Pareto analysis with drill-down capabilities coming soon
                 </p>
                 <Button variant="outline">Request Early Access</Button>
               </div>

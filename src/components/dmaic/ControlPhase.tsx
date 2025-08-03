@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Shield, FileCheck, BarChart2 } from "lucide-react";
+import { Shield, FileText, BarChart3, Settings } from "lucide-react";
+import { ControlPlanTool } from "../tools/ControlPlanTool";
 
 export function ControlPhase() {
   const tools = [
@@ -11,20 +12,20 @@ export function ControlPhase() {
       title: "Control Plan Generator",
       description: "Standardized control plan creation and management",
       icon: Shield,
-      status: "coming-soon"
+      status: "ready"
     },
     {
       id: "sop-template",
       title: "SOP Template",
       description: "Standard Operating Procedure documentation",
-      icon: FileCheck,
+      icon: FileText,
       status: "coming-soon"
     },
     {
       id: "monitoring-dashboard",
       title: "Monitoring Dashboard",
       description: "Real-time process monitoring and alerts",
-      icon: BarChart2,
+      icon: BarChart3,
       status: "coming-soon"
     }
   ];
@@ -60,19 +61,10 @@ export function ControlPhase() {
         ))}
       </div>
 
-      {/* Placeholder for all tools since they're all coming soon */}
-      <Card className="card-professional">
-        <CardContent className="pt-6">
-          <div className="text-center py-12">
-            <Shield className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-foreground mb-2">Control Phase Tools</h3>
-            <p className="text-muted-foreground mb-4">
-              Control plans, SOPs, and monitoring dashboards coming soon
-            </p>
-            <Button variant="outline">Request Early Access</Button>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Active Tool Content */}
+      <div className="animate-fade-in">
+        {activeTool === "control-plan" && <ControlPlanTool />}
+      </div>
     </div>
   );
 }

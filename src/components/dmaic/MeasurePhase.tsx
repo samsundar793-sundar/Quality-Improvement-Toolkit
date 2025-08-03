@@ -7,6 +7,8 @@ import { HistogramTool } from "../tools/HistogramTool";
 import { ParetoChartTool } from "../tools/ParetoChartTool";
 import { GageRRTool } from "../tools/GageRRTool";
 import { AdvancedGageRRTool } from "../tools/AdvancedGageRRTool";
+import { ControlChartTool } from "../tools/ControlChartTool";
+import { ProcessCapabilityTool } from "../tools/ProcessCapabilityTool";
 
 export function MeasurePhase() {
   const tools = [
@@ -36,14 +38,14 @@ export function MeasurePhase() {
       title: "Control Charts",
       description: "Process stability and variation monitoring",
       icon: LineChart,
-      status: "coming-soon"
+      status: "ready"
     },
     {
       id: "process-capability",
       title: "Process Capability",
       description: "Cp, Cpk, Pp, Ppk analysis",
       icon: Target,
-      status: "coming-soon"
+      status: "ready"
     },
     {
       id: "scatter-plot",
@@ -104,15 +106,17 @@ export function MeasurePhase() {
         {activeTool === "gage-rr" && <AdvancedGageRRTool />}
         {activeTool === "histogram" && <HistogramTool />}
         {activeTool === "pareto" && <ParetoChartTool />}
+        {activeTool === "control-chart" && <ControlChartTool />}
+        {activeTool === "process-capability" && <ProcessCapabilityTool />}
         
-        {activeTool === "control-chart" && (
+        {activeTool === "scatter-plot" && (
           <Card className="card-professional">
             <CardContent className="pt-6">
               <div className="text-center py-12">
-                <LineChart className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-foreground mb-2">Control Charts</h3>
+                <TrendingUp className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-foreground mb-2">Scatter Diagram</h3>
                 <p className="text-muted-foreground mb-4">
-                  X-bar, R-charts, and Individual-MR charts coming soon
+                  Correlation analysis and scatter plots coming soon
                 </p>
                 <Button variant="outline">Request Early Access</Button>
               </div>
