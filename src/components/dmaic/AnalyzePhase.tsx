@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, TrendingUp, BarChart, TestTube } from "lucide-react";
+import { Search, TrendingUp, BarChart, TestTube, GitBranch } from "lucide-react";
 import { FiveWhyTool } from "../tools/FiveWhyTool";
 import { RegressionAnalysisTool } from "../tools/RegressionAnalysisTool";
+import { FishboneTool } from "../tools/FishboneTool";
 
 export function AnalyzePhase() {
   const tools = [
@@ -23,11 +24,11 @@ export function AnalyzePhase() {
       status: "ready"
     },
     {
-      id: "advanced-pareto",
-      title: "Advanced Pareto",
-      description: "Multi-level Pareto analysis",
-      icon: BarChart,
-      status: "coming-soon"
+      id: "fishbone",
+      title: "Fishbone (Cause & Effect)",
+      description: "Systematic root cause identification",
+      icon: GitBranch,
+      status: "ready"
     },
     {
       id: "hypothesis-testing",
@@ -73,23 +74,22 @@ export function AnalyzePhase() {
       <div className="animate-fade-in">
         {activeTool === "five-why" && <FiveWhyTool />}
         {activeTool === "regression" && <RegressionAnalysisTool />}
+        {activeTool === "fishbone" && <FishboneTool />}
         
-        {activeTool === "advanced-pareto" && (
+        {activeTool === "hypothesis-testing" && (
           <Card className="card-professional">
             <CardContent className="pt-6">
               <div className="text-center py-12">
-                <BarChart className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-foreground mb-2">Advanced Pareto</h3>
+                <TestTube className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-foreground mb-2">Hypothesis Testing</h3>
                 <p className="text-muted-foreground mb-4">
-                  Multi-level Pareto analysis with drill-down capabilities coming soon
+                  Statistical significance testing tools coming soon
                 </p>
                 <Button variant="outline">Request Early Access</Button>
               </div>
             </CardContent>
           </Card>
         )}
-        
-        {/* Add placeholders for other tools */}
       </div>
     </div>
   );

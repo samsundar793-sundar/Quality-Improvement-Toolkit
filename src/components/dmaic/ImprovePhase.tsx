@@ -2,34 +2,37 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Star, FlaskConical, BarChart4 } from "lucide-react";
+import { Star, FlaskConical, BarChart4, Target, Calendar } from "lucide-react";
+import { SolutionPrioritizationTool } from "../tools/SolutionPrioritizationTool";
+import { DOETool } from "../tools/DOETool";
+import { KaizenTool } from "../tools/KaizenTool";
 
 export function ImprovePhase() {
   const tools = [
     {
-      id: "solution-matrix",
+      id: "solution-prioritization",
       title: "Solution Prioritization",
       description: "Weighted scoring matrix for solution evaluation",
-      icon: Star,
-      status: "coming-soon"
+      icon: Target,
+      status: "ready"
     },
     {
-      id: "pilot-testing",
-      title: "Pilot Testing Summary",
-      description: "Before/after comparison and improvement tracking",
+      id: "doe",
+      title: "Design of Experiments",
+      description: "Plan experimental validation of solutions",
       icon: FlaskConical,
-      status: "coming-soon"
+      status: "ready"
     },
     {
-      id: "improvement-tracking",
-      title: "Improvement Comparison",
-      description: "Performance metrics and ROI analysis",
-      icon: BarChart4,
-      status: "coming-soon"
+      id: "kaizen",
+      title: "Kaizen Event Planner",
+      description: "Plan and track improvement activities",
+      icon: Calendar,
+      status: "ready"
     }
   ];
 
-  const [activeTool, setActiveTool] = useState("solution-matrix");
+  const [activeTool, setActiveTool] = useState("solution-prioritization");
 
   return (
     <div className="space-y-6">
@@ -60,19 +63,12 @@ export function ImprovePhase() {
         ))}
       </div>
 
-      {/* Placeholder for all tools since they're all coming soon */}
-      <Card className="card-professional">
-        <CardContent className="pt-6">
-          <div className="text-center py-12">
-            <Star className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-foreground mb-2">Improve Phase Tools</h3>
-            <p className="text-muted-foreground mb-4">
-              Solution prioritization, pilot testing, and improvement tracking tools coming soon
-            </p>
-            <Button variant="outline">Request Early Access</Button>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Active Tool Content */}
+      <div className="animate-fade-in">
+        {activeTool === "solution-prioritization" && <SolutionPrioritizationTool />}
+        {activeTool === "doe" && <DOETool />}
+        {activeTool === "kaizen" && <KaizenTool />}
+      </div>
     </div>
   );
 }
