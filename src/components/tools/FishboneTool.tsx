@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { RotateCcw, Download, FileText } from "lucide-react";
+import { RotateCcw, Download, FileText, Share2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Cause {
@@ -269,6 +269,114 @@ ${cause.subcauses.map(sub => `  • ${sub}`).join('\n')}
             </Card>
           ))}
         </div>
+
+        {/* Visual Fishbone Diagram */}
+        {data.problemStatement && data.causes.some(c => c.description) && (
+          <Card className="bg-muted/30">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Share2 className="h-5 w-5" />
+                  Visual Fishbone Diagram
+                </CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <svg width="800" height="500" viewBox="0 0 800 500" className="border rounded-lg bg-background">
+                  {/* Main spine (horizontal line) */}
+                  <line x1="150" y1="250" x2="650" y2="250" stroke="hsl(var(--foreground))" strokeWidth="3"/>
+                  
+                  {/* Problem box (fish head) */}
+                  <rect x="650" y="220" width="120" height="60" fill="hsl(var(--primary))" fillOpacity="0.1" stroke="hsl(var(--primary))" strokeWidth="2" rx="5"/>
+                  <text x="710" y="235" textAnchor="middle" className="fill-primary text-xs font-medium">PROBLEM</text>
+                  <foreignObject x="655" y="240" width="110" height="35">
+                    <div className="text-xs text-center p-1 overflow-hidden">
+                      {data.problemStatement.substring(0, 50)}...
+                    </div>
+                  </foreignObject>
+                  
+                  {/* Top causes (People, Process, Equipment) */}
+                  {[
+                    { cause: data.causes[0], x: 200, y: 150, label: "PEOPLE" },
+                    { cause: data.causes[1], x: 350, y: 120, label: "PROCESS" },
+                    { cause: data.causes[2], x: 500, y: 150, label: "EQUIPMENT" }
+                  ].map(({ cause, x, y, label }) => (
+                    <g key={cause.id}>
+                      {/* Diagonal line from spine */}
+                      <line x1={x} y1="250" x2={x} y2={y + 40} stroke="hsl(var(--foreground))" strokeWidth="2"/>
+                      <line x1={x} y1={y + 40} x2={x + 80} y2={y} stroke="hsl(var(--foreground))" strokeWidth="2"/>
+                      
+                      {/* Category label */}
+                      <rect x={x + 80} y={y - 10} width="80" height="20" fill="hsl(var(--secondary))" fillOpacity="0.8" stroke="hsl(var(--border))" rx="3"/>
+                      <text x={x + 120} y={y + 4} textAnchor="middle" className="fill-foreground text-xs font-bold">{label}</text>
+                      
+                      {/* Main cause */}
+                      {cause.description && (
+                        <foreignObject x={x + 85} y={y + 15} width="75" height="30">
+                          <div className="text-xs p-1 bg-background border rounded text-center">
+                            {cause.description.substring(0, 20)}...
+                          </div>
+                        </foreignObject>
+                      )}
+                      
+                      {/* Sub-causes */}
+                      {cause.subcauses.slice(0, 2).map((subcause, index) => (
+                        subcause && (
+                          <foreignObject key={index} x={x + 10} y={y + 50 + index * 25} width="60" height="20">
+                            <div className="text-xs p-1 bg-muted border rounded">
+                              {subcause.substring(0, 12)}...
+                            </div>
+                          </foreignObject>
+                        )
+                      ))}
+                    </g>
+                  ))}
+                  
+                  {/* Bottom causes (Materials, Environment, Methods) */}
+                  {[
+                    { cause: data.causes[3], x: 200, y: 350, label: "MATERIALS" },
+                    { cause: data.causes[4], x: 350, y: 380, label: "ENVIRONMENT" },
+                    { cause: data.causes[5], x: 500, y: 350, label: "METHODS" }
+                  ].map(({ cause, x, y, label }) => (
+                    <g key={cause.id}>
+                      {/* Diagonal line from spine */}
+                      <line x1={x} y1="250" x2={x} y2={y - 40} stroke="hsl(var(--foreground))" strokeWidth="2"/>
+                      <line x1={x} y1={y - 40} x2={x + 80} y2={y} stroke="hsl(var(--foreground))" strokeWidth="2"/>
+                      
+                      {/* Category label */}
+                      <rect x={x + 80} y={y - 10} width="80" height="20" fill="hsl(var(--secondary))" fillOpacity="0.8" stroke="hsl(var(--border))" rx="3"/>
+                      <text x={x + 120} y={y + 4} textAnchor="middle" className="fill-foreground text-xs font-bold">{label}</text>
+                      
+                      {/* Main cause */}
+                      {cause.description && (
+                        <foreignObject x={x + 85} y={y - 45} width="75" height="30">
+                          <div className="text-xs p-1 bg-background border rounded text-center">
+                            {cause.description.substring(0, 20)}...
+                          </div>
+                        </foreignObject>
+                      )}
+                      
+                      {/* Sub-causes */}
+                      {cause.subcauses.slice(0, 2).map((subcause, index) => (
+                        subcause && (
+                          <foreignObject key={index} x={x + 10} y={y - 100 - index * 25} width="60" height="20">
+                            <div className="text-xs p-1 bg-muted border rounded">
+                              {subcause.substring(0, 12)}...
+                            </div>
+                          </foreignObject>
+                        )
+                      ))}
+                    </g>
+                  ))}
+                </svg>
+              </div>
+              <p className="text-sm text-muted-foreground mt-4">
+                This visual diagram shows the relationship between causes and the problem. Use the detailed analysis above for complete information.
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         {data.problemStatement && data.causes.some(c => c.description) && (
           <Card className="bg-muted/50">

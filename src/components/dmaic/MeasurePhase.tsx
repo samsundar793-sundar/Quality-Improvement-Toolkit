@@ -9,6 +9,7 @@ import { GageRRTool } from "../tools/GageRRTool";
 import { AdvancedGageRRTool } from "../tools/AdvancedGageRRTool";
 import { ControlChartTool } from "../tools/ControlChartTool";
 import { ProcessCapabilityTool } from "../tools/ProcessCapabilityTool";
+import { ScatterPlotTool } from "../tools/ScatterPlotTool";
 
 export function MeasurePhase() {
   const tools = [
@@ -52,7 +53,7 @@ export function MeasurePhase() {
       title: "Scatter Diagram",
       description: "Correlation and relationship analysis",
       icon: TrendingUp,
-      status: "coming-soon"
+      status: "ready"
     },
     {
       id: "fishbone",
@@ -108,23 +109,37 @@ export function MeasurePhase() {
         {activeTool === "pareto" && <ParetoChartTool />}
         {activeTool === "control-chart" && <ControlChartTool />}
         {activeTool === "process-capability" && <ProcessCapabilityTool />}
+        {activeTool === "scatter-plot" && <ScatterPlotTool />}
         
-        {activeTool === "scatter-plot" && (
+        {activeTool === "fishbone" && (
           <Card className="card-professional">
             <CardContent className="pt-6">
               <div className="text-center py-12">
-                <TrendingUp className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-foreground mb-2">Scatter Diagram</h3>
+                <FileSpreadsheet className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-foreground mb-2">Fishbone Diagram</h3>
                 <p className="text-muted-foreground mb-4">
-                  Correlation analysis and scatter plots coming soon
+                  Root cause analysis tool available in Analyze phase
+                </p>
+                <Button variant="outline">View in Analyze Phase</Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+        
+        {activeTool === "stratification" && (
+          <Card className="card-professional">
+            <CardContent className="pt-6">
+              <div className="text-center py-12">
+                <Layers className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-foreground mb-2">Stratification Analysis</h3>
+                <p className="text-muted-foreground mb-4">
+                  Data segmentation and pattern analysis coming soon
                 </p>
                 <Button variant="outline">Request Early Access</Button>
               </div>
             </CardContent>
           </Card>
         )}
-        
-        {/* Add similar placeholder cards for other coming-soon tools */}
       </div>
     </div>
   );
