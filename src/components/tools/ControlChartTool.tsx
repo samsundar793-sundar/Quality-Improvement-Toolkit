@@ -6,8 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LineChart, Upload, Download, RotateCcw, AlertTriangle } from "lucide-react";
+import { TrendingUp, RotateCcw, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, ReferenceLine } from "recharts";
 
 interface ControlChartData {
   samples: number[][];
@@ -21,6 +23,7 @@ interface ControlChartData {
   lclR: number;
   outOfControlPoints: number[];
   chartType: string;
+  chartData: { sample: number; mean: number; range: number; isOutOfControl: boolean }[];
 }
 
 export function ControlChartTool() {
@@ -73,6 +76,13 @@ export function ControlChartTool() {
       }
     });
 
+    const chartData = means.map((mean, index) => ({
+      sample: index + 1,
+      mean,
+      range: ranges[index],
+      isOutOfControl: outOfControlPoints.includes(index + 1)
+    }));
+
     return {
       samples,
       means,
@@ -84,7 +94,8 @@ export function ControlChartTool() {
       uclR,
       lclR,
       outOfControlPoints: [...new Set(outOfControlPoints)],
-      chartType
+      chartType,
+      chartData
     };
   };
 
@@ -113,7 +124,7 @@ export function ControlChartTool() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <LineChart className="h-6 w-6 text-primary" />
+            <TrendingUp className="h-6 w-6 text-primary" />
             <CardTitle>Control Charts</CardTitle>
           </div>
           <div className="flex gap-2">
@@ -229,6 +240,38 @@ export function ControlChartTool() {
                         <div>R LCL: {data.lclR.toFixed(3)}</div>
                       </div>
                     </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h4 className="font-semibold">X-Bar Control Chart</h4>
+                  <div className="h-64">
+                    <ChartContainer
+                      config={{
+                        mean: { label: "Sample Mean", color: "hsl(var(--primary))" },
+                        ucl: { label: "UCL", color: "hsl(var(--destructive))" },
+                        lcl: { label: "LCL", color: "hsl(var(--destructive))" }
+                      }}
+                      className="h-full w-full"
+                    >
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={data.chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                          <XAxis dataKey="sample" />
+                          <YAxis />
+                          <ChartTooltip content={<ChartTooltipContent />} />
+                          <Line 
+                            type="monotone" 
+                            dataKey="mean" 
+                            stroke="hsl(var(--primary))" 
+                            strokeWidth={2}
+                            dot={{ fill: "hsl(var(--primary))", r: 4 }}
+                          />
+                          <ReferenceLine y={data.uclX} stroke="hsl(var(--destructive))" strokeDasharray="5 5" label="UCL" />
+                          <ReferenceLine y={data.grandMean} stroke="hsl(var(--muted-foreground))" label="Center Line" />
+                          <ReferenceLine y={data.lclX} stroke="hsl(var(--destructive))" strokeDasharray="5 5" label="LCL" />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </ChartContainer>
                   </div>
                 </div>
               </div>

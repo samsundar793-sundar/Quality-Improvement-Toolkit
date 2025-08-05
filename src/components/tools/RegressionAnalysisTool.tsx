@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TrendingUp, Upload, Download, RotateCcw } from "lucide-react";
+import { TrendingUp, RotateCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { ScatterChart, Scatter, XAxis, YAxis, ResponsiveContainer } from "recharts";
 
 interface RegressionData {
   xValues: number[];
@@ -20,6 +21,8 @@ interface RegressionData {
   predictions: number[];
   residuals: number[];
   pValue: number;
+  scatterData: { x: number; y: number }[];
+  regressionLine: { x: number; y: number }[];
 }
 
 export function RegressionAnalysisTool() {
@@ -73,6 +76,17 @@ export function RegressionAnalysisTool() {
     const tStat = slope / slopeStdError;
     const pValue = 2 * (1 - tDistribution(Math.abs(tStat), n - 2));
 
+    // Create scatter plot data
+    const scatterData = xValues.map((x, i) => ({ x, y: yValues[i] }));
+    
+    // Create regression line data
+    const minX = Math.min(...xValues);
+    const maxX = Math.max(...xValues);
+    const regressionLine = [
+      { x: minX, y: slope * minX + intercept },
+      { x: maxX, y: slope * maxX + intercept }
+    ];
+
     return {
       xValues,
       yValues,
@@ -84,7 +98,9 @@ export function RegressionAnalysisTool() {
       interceptStdError,
       predictions,
       residuals,
-      pValue
+      pValue,
+      scatterData,
+      regressionLine
     };
   };
 
@@ -263,6 +279,28 @@ export function RegressionAnalysisTool() {
                         <div>Correlation: {data.correlation > 0 ? "Positive" : "Negative"} linear relationship</div>
                       </div>
                     </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h4 className="font-semibold">Regression Analysis Chart</h4>
+                  <div className="h-64">
+                    <ChartContainer
+                      config={{
+                        scatter: { label: "Data Points", color: "hsl(var(--primary))" },
+                        regression: { label: "Regression Line", color: "hsl(var(--destructive))" }
+                      }}
+                      className="h-full w-full"
+                    >
+                      <ResponsiveContainer width="100%" height="100%">
+                        <ScatterChart data={data.scatterData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                          <XAxis type="number" dataKey="x" domain={['dataMin - 1', 'dataMax + 1']} />
+                          <YAxis type="number" dataKey="y" domain={['dataMin - 1', 'dataMax + 1']} />
+                          <ChartTooltip content={<ChartTooltipContent />} />
+                          <Scatter dataKey="y" fill="hsl(var(--primary))" />
+                        </ScatterChart>
+                      </ResponsiveContainer>
+                    </ChartContainer>
                   </div>
                 </div>
               </div>

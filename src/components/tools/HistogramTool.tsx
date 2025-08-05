@@ -7,6 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart3, Upload, Download, RotateCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, ReferenceLine } from "recharts";
 
 interface HistogramData {
   values: number[];
@@ -16,6 +18,7 @@ interface HistogramData {
   stdDev: number;
   skewness: number;
   kurtosis: number;
+  chartData: { bin: string; count: number; range: string }[];
 }
 
 export function HistogramTool() {
@@ -39,7 +42,29 @@ export function HistogramTool() {
     const skewness = values.reduce((sum, val) => sum + Math.pow((val - mean) / stdDev, 3), 0) / n;
     const kurtosis = values.reduce((sum, val) => sum + Math.pow((val - mean) / stdDev, 4), 0) / n - 3;
 
-    return { values, bins, mean, median, stdDev, skewness, kurtosis };
+    // Create histogram bins
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const binWidth = (max - min) / bins;
+    const binCounts = new Array(bins).fill(0);
+    const chartData = [];
+
+    values.forEach(value => {
+      const binIndex = Math.min(Math.floor((value - min) / binWidth), bins - 1);
+      binCounts[binIndex]++;
+    });
+
+    for (let i = 0; i < bins; i++) {
+      const binStart = min + i * binWidth;
+      const binEnd = min + (i + 1) * binWidth;
+      chartData.push({
+        bin: `Bin ${i + 1}`,
+        count: binCounts[i],
+        range: `${binStart.toFixed(1)}-${binEnd.toFixed(1)}`
+      });
+    }
+
+    return { values, bins, mean, median, stdDev, skewness, kurtosis, chartData };
   };
 
   const processData = () => {
@@ -141,6 +166,28 @@ export function HistogramTool() {
                       <div>{Math.abs(data.skewness) < 0.5 ? "✓ Approximately symmetric" : data.skewness > 0.5 ? "→ Right-skewed" : "← Left-skewed"}</div>
                       <div>{Math.abs(data.kurtosis) < 1 ? "✓ Normal-like tails" : data.kurtosis > 1 ? "⬆ Heavy tails" : "⬇ Light tails"}</div>
                     </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <h4 className="font-semibold">Histogram Visualization</h4>
+                  <div className="h-64">
+                    <ChartContainer
+                      config={{
+                        count: { label: "Frequency", color: "hsl(var(--primary))" }
+                      }}
+                      className="h-full w-full"
+                    >
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={data.chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                          <XAxis dataKey="bin" />
+                          <YAxis />
+                          <ChartTooltip content={<ChartTooltipContent />} />
+                          <Bar dataKey="count" fill="hsl(var(--primary))" />
+                          <ReferenceLine x={`Bin ${Math.ceil(data.bins * (data.mean - Math.min(...data.values)) / (Math.max(...data.values) - Math.min(...data.values)))}`} stroke="hsl(var(--destructive))" strokeDasharray="5 5" label="Mean" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </ChartContainer>
                   </div>
                 </div>
               </div>
