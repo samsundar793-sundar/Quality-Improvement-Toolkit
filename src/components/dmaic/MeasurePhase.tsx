@@ -10,6 +10,8 @@ import { AdvancedGageRRTool } from "../tools/AdvancedGageRRTool";
 import { ControlChartTool } from "../tools/ControlChartTool";
 import { ProcessCapabilityTool } from "../tools/ProcessCapabilityTool";
 import { ScatterPlotTool } from "../tools/ScatterPlotTool";
+import { FishboneTool } from "../tools/FishboneTool";
+import { StratificationTool } from "../tools/StratificationTool";
 
 export function MeasurePhase() {
   const tools = [
@@ -60,14 +62,14 @@ export function MeasurePhase() {
       title: "Fishbone Diagram",
       description: "Cause and effect analysis",
       icon: FileSpreadsheet,
-      status: "coming-soon"
+      status: "ready"
     },
     {
       id: "stratification",
       title: "Stratification",
       description: "Data segmentation and pattern analysis",
       icon: Layers,
-      status: "coming-soon"
+      status: "ready"
     }
   ];
 
@@ -110,36 +112,8 @@ export function MeasurePhase() {
         {activeTool === "control-chart" && <ControlChartTool />}
         {activeTool === "process-capability" && <ProcessCapabilityTool />}
         {activeTool === "scatter-plot" && <ScatterPlotTool />}
-        
-        {activeTool === "fishbone" && (
-          <Card className="card-professional">
-            <CardContent className="pt-6">
-              <div className="text-center py-12">
-                <FileSpreadsheet className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-foreground mb-2">Fishbone Diagram</h3>
-                <p className="text-muted-foreground mb-4">
-                  Root cause analysis tool available in Analyze phase
-                </p>
-                <Button variant="outline">View in Analyze Phase</Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-        
-        {activeTool === "stratification" && (
-          <Card className="card-professional">
-            <CardContent className="pt-6">
-              <div className="text-center py-12">
-                <Layers className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-foreground mb-2">Stratification Analysis</h3>
-                <p className="text-muted-foreground mb-4">
-                  Data segmentation and pattern analysis coming soon
-                </p>
-                <Button variant="outline">Request Early Access</Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        {activeTool === "fishbone" && <FishboneTool />}
+        {activeTool === "stratification" && <StratificationTool />}
       </div>
     </div>
   );

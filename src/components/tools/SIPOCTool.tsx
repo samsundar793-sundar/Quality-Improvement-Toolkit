@@ -198,18 +198,74 @@ ${sipoc.customers.filter(s => s.trim()).map((s, i) => `${i + 1}. ${s}`).join('\n
           {renderCategory("Customers", "customers", "text-purple-500")}
         </div>
         
-        {/* Visual Flow */}
-        <div className="mt-8 p-4 bg-muted/30 rounded-lg">
-          <div className="flex items-center justify-center text-sm text-muted-foreground">
-            <span className="text-blue-500 font-medium">Suppliers</span>
-            <span className="mx-2">→</span>
-            <span className="text-green-500 font-medium">Inputs</span>
-            <span className="mx-2">→</span>
-            <span className="text-yellow-500 font-medium">Process</span>
-            <span className="mx-2">→</span>
-            <span className="text-orange-500 font-medium">Outputs</span>
-            <span className="mx-2">→</span>
-            <span className="text-purple-500 font-medium">Customers</span>
+        {/* Visual SIPOC Diagram */}
+        <div className="mt-8 p-6 bg-muted/30 rounded-lg">
+          <h4 className="text-lg font-semibold mb-4 text-center">SIPOC Visual Flow</h4>
+          <div className="relative overflow-x-auto">
+            <svg width="100%" height="200" viewBox="0 0 1000 200" className="min-w-[800px]">
+              {/* Boxes */}
+              <rect x="20" y="60" width="160" height="80" rx="8" fill="hsl(var(--primary))" fillOpacity="0.1" stroke="hsl(var(--primary))" strokeWidth="2"/>
+              <rect x="220" y="60" width="160" height="80" rx="8" fill="hsl(var(--secondary))" fillOpacity="0.1" stroke="hsl(var(--secondary))" strokeWidth="2"/>
+              <rect x="420" y="60" width="160" height="80" rx="8" fill="hsl(var(--accent))" fillOpacity="0.1" stroke="hsl(var(--accent))" strokeWidth="2"/>
+              <rect x="620" y="60" width="160" height="80" rx="8" fill="hsl(var(--primary))" fillOpacity="0.1" stroke="hsl(var(--primary))" strokeWidth="2"/>
+              <rect x="820" y="60" width="160" height="80" rx="8" fill="hsl(var(--secondary))" fillOpacity="0.1" stroke="hsl(var(--secondary))" strokeWidth="2"/>
+              
+              {/* Arrows */}
+              <path d="M180 100 L220 100" stroke="hsl(var(--foreground))" strokeWidth="2" markerEnd="url(#arrowhead)"/>
+              <path d="M380 100 L420 100" stroke="hsl(var(--foreground))" strokeWidth="2" markerEnd="url(#arrowhead)"/>
+              <path d="M580 100 L620 100" stroke="hsl(var(--foreground))" strokeWidth="2" markerEnd="url(#arrowhead)"/>
+              <path d="M780 100 L820 100" stroke="hsl(var(--foreground))" strokeWidth="2" markerEnd="url(#arrowhead)"/>
+              
+              {/* Arrow marker */}
+              <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                  <polygon points="0 0, 10 3.5, 0 7" fill="hsl(var(--foreground))" />
+                </marker>
+              </defs>
+              
+              {/* Labels */}
+              <text x="100" y="50" textAnchor="middle" className="fill-primary font-semibold text-sm">Suppliers</text>
+              <text x="300" y="50" textAnchor="middle" className="fill-secondary-foreground font-semibold text-sm">Inputs</text>
+              <text x="500" y="50" textAnchor="middle" className="fill-accent-foreground font-semibold text-sm">Process</text>
+              <text x="700" y="50" textAnchor="middle" className="fill-primary font-semibold text-sm">Outputs</text>
+              <text x="900" y="50" textAnchor="middle" className="fill-secondary-foreground font-semibold text-sm">Customers</text>
+              
+              {/* Content preview */}
+              <text x="100" y="95" textAnchor="middle" className="fill-foreground text-xs">
+                {sipoc.suppliers.filter(s => s.trim()).slice(0, 2).join(", ") || "Add suppliers..."}
+              </text>
+              <text x="100" y="110" textAnchor="middle" className="fill-muted-foreground text-xs">
+                +{Math.max(0, sipoc.suppliers.filter(s => s.trim()).length - 2)} more
+              </text>
+              
+              <text x="300" y="95" textAnchor="middle" className="fill-foreground text-xs">
+                {sipoc.inputs.filter(s => s.trim()).slice(0, 2).join(", ") || "Add inputs..."}
+              </text>
+              <text x="300" y="110" textAnchor="middle" className="fill-muted-foreground text-xs">
+                +{Math.max(0, sipoc.inputs.filter(s => s.trim()).length - 2)} more
+              </text>
+              
+              <text x="500" y="95" textAnchor="middle" className="fill-foreground text-xs">
+                {sipoc.process.filter(s => s.trim()).slice(0, 2).join(", ") || "Add process..."}
+              </text>
+              <text x="500" y="110" textAnchor="middle" className="fill-muted-foreground text-xs">
+                +{Math.max(0, sipoc.process.filter(s => s.trim()).length - 2)} more
+              </text>
+              
+              <text x="700" y="95" textAnchor="middle" className="fill-foreground text-xs">
+                {sipoc.outputs.filter(s => s.trim()).slice(0, 2).join(", ") || "Add outputs..."}
+              </text>
+              <text x="700" y="110" textAnchor="middle" className="fill-muted-foreground text-xs">
+                +{Math.max(0, sipoc.outputs.filter(s => s.trim()).length - 2)} more
+              </text>
+              
+              <text x="900" y="95" textAnchor="middle" className="fill-foreground text-xs">
+                {sipoc.customers.filter(s => s.trim()).slice(0, 2).join(", ") || "Add customers..."}
+              </text>
+              <text x="900" y="110" textAnchor="middle" className="fill-muted-foreground text-xs">
+                +{Math.max(0, sipoc.customers.filter(s => s.trim()).length - 2)} more
+              </text>
+            </svg>
           </div>
         </div>
       </CardContent>

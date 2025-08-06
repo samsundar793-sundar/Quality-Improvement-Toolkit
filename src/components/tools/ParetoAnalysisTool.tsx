@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PieChart, Upload, Download, RotateCcw, Plus, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { ResponsiveContainer, ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine } from "recharts";
 
 interface ParetoItem {
   category: string;
@@ -257,6 +258,73 @@ Analysis Date: ${new Date().toLocaleDateString()}
                   </div>
                 </div>
 
+                {/* Pareto Chart */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-lg">Pareto Chart</h4>
+                  <div className="h-80 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <ComposedChart data={data.items} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                        <XAxis 
+                          dataKey="category" 
+                          tick={{ fontSize: 12, fill: "hsl(var(--foreground))" }}
+                          angle={-45}
+                          textAnchor="end"
+                          height={80}
+                        />
+                        <YAxis 
+                          yAxisId="left"
+                          tick={{ fontSize: 12, fill: "hsl(var(--foreground))" }}
+                          label={{ value: 'Count', angle: -90, position: 'insideLeft' }}
+                        />
+                        <YAxis 
+                          yAxisId="right" 
+                          orientation="right"
+                          tick={{ fontSize: 12, fill: "hsl(var(--foreground))" }}
+                          label={{ value: 'Cumulative %', angle: 90, position: 'insideRight' }}
+                          domain={[0, 100]}
+                        />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: "hsl(var(--background))",
+                            border: "1px solid hsl(var(--border))",
+                            borderRadius: "8px"
+                          }}
+                          formatter={(value, name) => [
+                            name === 'count' ? value : `${value}%`,
+                            name === 'count' ? 'Count' : 'Cumulative %'
+                          ]}
+                        />
+                        <Legend />
+                        <Bar 
+                          yAxisId="left"
+                          dataKey="count" 
+                          name="Count"
+                          fill="hsl(var(--primary))"
+                          fillOpacity={0.8}
+                        />
+                        <Line 
+                          yAxisId="right"
+                          type="monotone" 
+                          dataKey="cumulativePercentage" 
+                          name="Cumulative %"
+                          stroke="hsl(var(--destructive))" 
+                          strokeWidth={3}
+                          dot={{ fill: "hsl(var(--destructive))", strokeWidth: 2, r: 4 }}
+                        />
+                        <ReferenceLine 
+                          yAxisId="right"
+                          y={80} 
+                          stroke="hsl(var(--warning))" 
+                          strokeDasharray="5 5" 
+                          strokeWidth={2}
+                          label={{ value: "80% Line", position: "top" }}
+                        />
+                      </ComposedChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
                 <div className="space-y-4">
                   <h4 className="font-semibold text-lg">Pareto Analysis Results</h4>
                   <div className="overflow-x-auto">
@@ -273,7 +341,7 @@ Analysis Date: ${new Date().toLocaleDateString()}
                       </thead>
                       <tbody>
                         {data.items.map((item, index) => (
-                          <tr key={index} className={item.cumulativePercentage <= 80 ? "bg-yellow-50 dark:bg-yellow-950/20" : ""}>
+                          <tr key={index} className={item.cumulativePercentage <= 80 ? "bg-primary/5" : ""}>
                             <td className="border border-border p-2">{index + 1}</td>
                             <td className="border border-border p-2">{item.category}</td>
                             <td className="border border-border p-2 text-right">{item.count}</td>
@@ -281,8 +349,8 @@ Analysis Date: ${new Date().toLocaleDateString()}
                             <td className="border border-border p-2 text-right">{item.cumulativePercentage.toFixed(1)}%</td>
                             <td className="border border-border p-2 text-center">
                               {item.cumulativePercentage <= 80 ? 
-                                <span className="text-red-500 font-bold">Vital Few</span> : 
-                                <span className="text-green-500">Useful Many</span>
+                                <span className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 px-2 py-1 rounded text-xs font-medium">Vital Few</span> : 
+                                <span className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 px-2 py-1 rounded text-xs font-medium">Useful Many</span>
                               }
                             </td>
                           </tr>

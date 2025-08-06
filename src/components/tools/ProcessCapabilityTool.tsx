@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Target, Upload, Download, RotateCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from "recharts";
 
 interface CapabilityData {
   values: number[];
@@ -95,6 +96,23 @@ export function ProcessCapabilityTool() {
     const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
 
     return sign * y;
+  };
+
+  const generateNormalDistribution = (capData: CapabilityData) => {
+    const points = [];
+    const range = Math.max(capData.usl - capData.lsl, 6 * capData.stdDev) * 1.2;
+    const center = capData.mean;
+    const start = center - range / 2;
+    const end = center + range / 2;
+    const steps = 100;
+    
+    for (let i = 0; i <= steps; i++) {
+      const x = start + (end - start) * (i / steps);
+      const density = (1 / (capData.stdDev * Math.sqrt(2 * Math.PI))) * 
+                     Math.exp(-0.5 * Math.pow((x - capData.mean) / capData.stdDev, 2));
+      points.push({ x: x.toFixed(2), density });
+    }
+    return points;
   };
 
   const processData = () => {
@@ -188,6 +206,69 @@ export function ProcessCapabilityTool() {
                   <div className="text-center p-4 bg-muted/30 rounded-lg">
                     <div className="text-2xl font-bold text-primary">{data.ppk.toFixed(3)}</div>
                     <div className="text-sm text-muted-foreground">Ppk</div>
+                  </div>
+                </div>
+
+                {/* Process Capability Chart */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-lg">Process Distribution vs Specification Limits</h4>
+                  <div className="h-80 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={generateNormalDistribution(data)} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                        <XAxis 
+                          dataKey="x" 
+                          tick={{ fontSize: 12, fill: "hsl(var(--foreground))" }}
+                          label={{ value: 'Measurement Value', position: 'insideBottom', offset: -10 }}
+                        />
+                        <YAxis 
+                          tick={{ fontSize: 12, fill: "hsl(var(--foreground))" }}
+                          label={{ value: 'Probability Density', angle: -90, position: 'insideLeft' }}
+                        />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: "hsl(var(--background))",
+                            border: "1px solid hsl(var(--border))",
+                            borderRadius: "8px"
+                          }}
+                          formatter={(value) => [Number(value).toFixed(4), 'Density']}
+                        />
+                        <Area 
+                          type="monotone" 
+                          dataKey="density" 
+                          stroke="hsl(var(--primary))" 
+                          fill="hsl(var(--primary))" 
+                          fillOpacity={0.3}
+                        />
+                        <ReferenceLine 
+                          x={data.lsl} 
+                          stroke="hsl(var(--destructive))" 
+                          strokeDasharray="5 5" 
+                          strokeWidth={2}
+                          label={{ value: `LSL: ${data.lsl}`, position: "top" }}
+                        />
+                        <ReferenceLine 
+                          x={data.usl} 
+                          stroke="hsl(var(--destructive))" 
+                          strokeDasharray="5 5" 
+                          strokeWidth={2}
+                          label={{ value: `USL: ${data.usl}`, position: "top" }}
+                        />
+                        <ReferenceLine 
+                          x={data.target} 
+                          stroke="hsl(var(--warning))" 
+                          strokeDasharray="3 3" 
+                          strokeWidth={2}
+                          label={{ value: `Target: ${data.target}`, position: "top" }}
+                        />
+                        <ReferenceLine 
+                          x={data.mean} 
+                          stroke="hsl(var(--primary))" 
+                          strokeWidth={3}
+                          label={{ value: `Mean: ${data.mean.toFixed(2)}`, position: "top" }}
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
                   </div>
                 </div>
                 

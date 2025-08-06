@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Shield, FileText, BarChart3, Settings } from "lucide-react";
 import { ControlPlanTool } from "../tools/ControlPlanTool";
+import { SOPTemplateTool } from "../tools/SOPTemplateTool";
+import { MonitoringDashboardTool } from "../tools/MonitoringDashboardTool";
 
 export function ControlPhase() {
   const tools = [
@@ -19,14 +21,14 @@ export function ControlPhase() {
       title: "SOP Template",
       description: "Standard Operating Procedure documentation",
       icon: FileText,
-      status: "coming-soon"
+      status: "ready"
     },
     {
       id: "monitoring-dashboard",
       title: "Monitoring Dashboard",
       description: "Real-time process monitoring and alerts",
       icon: BarChart3,
-      status: "coming-soon"
+      status: "ready"
     }
   ];
 
@@ -64,6 +66,8 @@ export function ControlPhase() {
       {/* Active Tool Content */}
       <div className="animate-fade-in">
         {activeTool === "control-plan" && <ControlPlanTool />}
+        {activeTool === "sop-template" && <SOPTemplateTool />}
+        {activeTool === "monitoring-dashboard" && <MonitoringDashboardTool />}
       </div>
     </div>
   );
