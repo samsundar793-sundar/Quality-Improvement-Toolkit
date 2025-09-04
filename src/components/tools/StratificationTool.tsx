@@ -231,7 +231,7 @@ Analysis Date: ${new Date().toLocaleDateString()}
               </p>
               <textarea
                 id="data"
-                className="w-full h-40 p-3 border border-border rounded-md resize-none font-mono text-sm"
+                className="w-full h-40 p-3 border border-border bg-background text-foreground rounded-md resize-none font-mono text-sm focus:bg-background focus:text-foreground"
                 value={rawData}
                 onChange={(e) => setRawData(e.target.value)}
                 placeholder="Value,Shift,Date
