@@ -6,6 +6,8 @@ import { Search, TrendingUp, BarChart, TestTube, GitBranch } from "lucide-react"
 import { FiveWhyTool } from "../tools/FiveWhyTool";
 import { RegressionAnalysisTool } from "../tools/RegressionAnalysisTool";
 import { FishboneTool } from "../tools/FishboneTool";
+import { BoxPlotTool } from "../tools/BoxPlotTool";
+import { FMEATool } from "../tools/FMEATool";
 
 export function AnalyzePhase() {
   const tools = [
@@ -31,11 +33,18 @@ export function AnalyzePhase() {
       status: "ready"
     },
     {
-      id: "hypothesis-testing",
-      title: "Hypothesis Testing",
-      description: "Statistical significance testing",
+      id: "boxplot",
+      title: "Box Plot & Time Series",
+      description: "Statistical distribution analysis",
+      icon: BarChart,
+      status: "ready"
+    },
+    {
+      id: "fmea",
+      title: "FMEA",
+      description: "Failure Mode and Effects Analysis",
       icon: TestTube,
-      status: "coming-soon"
+      status: "ready"
     }
   ];
 
@@ -75,21 +84,8 @@ export function AnalyzePhase() {
         {activeTool === "five-why" && <FiveWhyTool />}
         {activeTool === "regression" && <RegressionAnalysisTool />}
         {activeTool === "fishbone" && <FishboneTool />}
-        
-        {activeTool === "hypothesis-testing" && (
-          <Card className="card-professional">
-            <CardContent className="pt-6">
-              <div className="text-center py-12">
-                <TestTube className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-foreground mb-2">Hypothesis Testing</h3>
-                <p className="text-muted-foreground mb-4">
-                  Statistical significance testing tools coming soon
-                </p>
-                <Button variant="outline">Request Early Access</Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        {activeTool === "boxplot" && <BoxPlotTool />}
+        {activeTool === "fmea" && <FMEATool />}
       </div>
     </div>
   );

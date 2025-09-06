@@ -6,6 +6,7 @@ import { Star, FlaskConical, BarChart4, Target, Calendar } from "lucide-react";
 import { SolutionPrioritizationTool } from "../tools/SolutionPrioritizationTool";
 import { DOETool } from "../tools/DOETool";
 import { KaizenTool } from "../tools/KaizenTool";
+import { PughMatrixTool } from "../tools/PughMatrixTool";
 
 export function ImprovePhase() {
   const tools = [
@@ -21,6 +22,13 @@ export function ImprovePhase() {
       title: "Design of Experiments",
       description: "Plan experimental validation of solutions",
       icon: FlaskConical,
+      status: "ready"
+    },
+    {
+      id: "pugh-matrix",
+      title: "Pugh Matrix",
+      description: "Solution comparison matrix",
+      icon: BarChart4,
       status: "ready"
     },
     {
@@ -67,6 +75,7 @@ export function ImprovePhase() {
       <div className="animate-fade-in">
         {activeTool === "solution-prioritization" && <SolutionPrioritizationTool />}
         {activeTool === "doe" && <DOETool />}
+        {activeTool === "pugh-matrix" && <PughMatrixTool />}
         {activeTool === "kaizen" && <KaizenTool />}
       </div>
     </div>

@@ -6,6 +6,8 @@ import { Shield, FileText, BarChart3, Settings } from "lucide-react";
 import { ControlPlanTool } from "../tools/ControlPlanTool";
 import { SOPTemplateTool } from "../tools/SOPTemplateTool";
 import { MonitoringDashboardTool } from "../tools/MonitoringDashboardTool";
+import { PokaYokeTool } from "../tools/PokaYokeTool";
+import { AuditChecklistTool } from "../tools/AuditChecklistTool";
 
 export function ControlPhase() {
   const tools = [
@@ -21,6 +23,20 @@ export function ControlPhase() {
       title: "SOP Template",
       description: "Standard Operating Procedure documentation",
       icon: FileText,
+      status: "ready"
+    },
+    {
+      id: "poka-yoke",
+      title: "Poka-Yoke Checklist",
+      description: "Mistake-proofing implementation guide",
+      icon: Settings,
+      status: "ready"
+    },
+    {
+      id: "audit-checklist",
+      title: "Audit Checklist",
+      description: "Comprehensive audit management tool",
+      icon: Shield,
       status: "ready"
     },
     {
@@ -67,6 +83,8 @@ export function ControlPhase() {
       <div className="animate-fade-in">
         {activeTool === "control-plan" && <ControlPlanTool />}
         {activeTool === "sop-template" && <SOPTemplateTool />}
+        {activeTool === "poka-yoke" && <PokaYokeTool />}
+        {activeTool === "audit-checklist" && <AuditChecklistTool />}
         {activeTool === "monitoring-dashboard" && <MonitoringDashboardTool />}
       </div>
     </div>
