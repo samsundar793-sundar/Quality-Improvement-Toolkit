@@ -72,8 +72,11 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
                 DMAIC Toolkit
               </span>
             </h1>
-            <p className="text-xl md:text-2xl text-blue-100 mb-8 animate-slide-up max-w-2xl mx-auto">
+            <p className="text-xl md:text-2xl text-blue-100 mb-4 animate-slide-up max-w-2xl mx-auto">
               Professional-grade statistical analysis and quality improvement tools for Six Sigma practitioners
+            </p>
+            <p className="text-sm md:text-base text-blue-200/80 mb-8 animate-slide-up max-w-2xl mx-auto">
+              Created By SAMSUNDAR A • Powered by Lovable AI
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-scale-in">
               <Button 
