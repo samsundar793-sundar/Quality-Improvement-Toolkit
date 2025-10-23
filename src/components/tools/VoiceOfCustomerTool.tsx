@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Users, Download, Plus, X, RotateCcw } from "lucide-react";
+import { Users, Download, Plus, X, RotateCcw, Upload, BarChart3 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from "recharts";
+import * as XLSX from 'xlsx';
 
 interface CustomerRequirement {
   id: string;
@@ -19,6 +21,7 @@ interface CustomerRequirement {
 
 export function VoiceOfCustomerTool() {
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [requirements, setRequirements] = useState<CustomerRequirement[]>([
     {
       id: "1",
@@ -167,6 +170,49 @@ Analysis Date: ${new Date().toLocaleDateString()}
     }]);
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const bstr = evt.target?.result;
+        const wb = XLSX.read(bstr, { type: 'binary' });
+        const wsname = wb.SheetNames[0];
+        const ws = wb.Sheets[wsname];
+        const data = XLSX.utils.sheet_to_json(ws);
+
+        const importedReqs: CustomerRequirement[] = data.map((row: any, index: number) => ({
+          id: (index + 1).toString(),
+          requirement: row.requirement || row.Requirement || "",
+          importance: (row.importance || row.Importance || "Medium") as any,
+          currentRating: parseInt(row.currentRating || row["Current Rating"] || "1"),
+          targetRating: parseInt(row.targetRating || row["Target Rating"] || "5"),
+          gap: 0
+        })).map(req => ({
+          ...req,
+          gap: req.targetRating - req.currentRating
+        }));
+
+        setRequirements(importedReqs.length > 0 ? importedReqs : [requirements[0]]);
+        
+        toast({
+          title: "Data Imported",
+          description: `Successfully imported ${importedReqs.length} requirements from Excel.`
+        });
+      } catch (error) {
+        toast({
+          title: "Import Failed",
+          description: "Could not read the Excel file. Please check the format.",
+          variant: "destructive"
+        });
+      }
+    };
+    reader.readAsBinaryString(file);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   const getImportanceColor = (importance: string) => {
     switch (importance) {
       case "Critical": return "text-red-500";
@@ -176,6 +222,21 @@ Analysis Date: ${new Date().toLocaleDateString()}
       default: return "text-muted-foreground";
     }
   };
+
+  const getBarColor = (gap: number) => {
+    if (gap > 2) return "#ef4444";
+    if (gap > 1) return "#f59e0b";
+    return "#22c55e";
+  };
+
+  const chartData = requirements
+    .filter(r => r.requirement.trim())
+    .map(r => ({
+      name: r.requirement.substring(0, 20) + (r.requirement.length > 20 ? '...' : ''),
+      gap: r.gap,
+      current: r.currentRating,
+      target: r.targetRating
+    }));
 
   return (
     <Card className="card-professional">
@@ -193,11 +254,22 @@ Analysis Date: ${new Date().toLocaleDateString()}
             <Button variant="outline" onClick={loadTemplate}>
               Load Template
             </Button>
+            <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
+              <Upload className="h-4 w-4 mr-2" />
+              Import Excel
+            </Button>
             <Button variant="analytics" onClick={exportVOC}>
               <Download className="h-4 w-4 mr-2" />
               Export
             </Button>
           </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".xlsx,.xls"
+            onChange={handleFileUpload}
+            className="hidden"
+          />
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -291,6 +363,38 @@ Analysis Date: ${new Date().toLocaleDateString()}
           ))}
         </div>
 
+        {/* Gap Analysis Chart */}
+        {chartData.length > 0 && (
+          <div className="mt-8 p-4 border border-border rounded-lg">
+            <div className="flex items-center gap-2 mb-4">
+              <BarChart3 className="h-5 w-5 text-primary" />
+              <h4 className="font-semibold">Gap Analysis Visualization</h4>
+            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <XAxis dataKey="name" className="text-xs" />
+                <YAxis />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'hsl(var(--background))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '6px'
+                  }}
+                />
+                <Legend />
+                <Bar dataKey="gap" name="Gap" radius={[8, 8, 0, 0]}>
+                  {chartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={getBarColor(entry.gap)} />
+                  ))}
+                </Bar>
+                <Bar dataKey="current" name="Current" fill="hsl(var(--chart-2))" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="target" name="Target" fill="hsl(var(--chart-1))" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+
         {/* Summary */}
         {requirements.some(r => r.requirement.trim()) && (
           <div className="mt-8 p-4 bg-muted/30 rounded-lg">
@@ -304,6 +408,9 @@ Analysis Date: ${new Date().toLocaleDateString()}
                     .map(r => (
                       <div key={r.id}>• {r.requirement} (Gap: {r.gap})</div>
                     ))}
+                  {requirements.filter(r => r.importance === "Critical" && r.requirement.trim()).length === 0 && (
+                    <div className="text-muted-foreground">No critical requirements</div>
+                  )}
                 </div>
               </div>
               <div>
