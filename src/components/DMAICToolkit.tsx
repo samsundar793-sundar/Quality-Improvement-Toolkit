@@ -3,7 +3,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Target, BarChart3, TrendingUp, Settings, Shield } from "lucide-react";
+import { ArrowLeft, Target, BarChart3, TrendingUp, Settings, Shield, FolderOpen, Download, Save } from "lucide-react";
+import { useProject } from "@/contexts/ProjectContext";
+import { ProjectLibrary } from "@/components/ProjectLibrary";
+import { PDFExporter } from "@/lib/pdfExport";
 
 // Import DMAIC phase components
 import { DefinePhase } from "./dmaic/DefinePhase";
@@ -18,6 +21,14 @@ interface DMAICToolkitProps {
 
 export function DMAICToolkit({ onBackToLanding }: DMAICToolkitProps) {
   const [activePhase, setActivePhase] = useState("define");
+  const [showProjectLibrary, setShowProjectLibrary] = useState(false);
+  const { currentProject, exportProject } = useProject();
+
+  const handleExportPDF = () => {
+    if (currentProject) {
+      PDFExporter.exportProjectReport(currentProject);
+    }
+  };
 
   const phases = [
     {
@@ -64,6 +75,8 @@ export function DMAICToolkit({ onBackToLanding }: DMAICToolkitProps) {
 
   return (
     <div className="min-h-screen bg-background">
+      {showProjectLibrary && <ProjectLibrary onClose={() => setShowProjectLibrary(false)} />}
+      
       {/* Header */}
       <div className="border-b border-border bg-card/50 sticky top-0 z-40 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
@@ -79,10 +92,43 @@ export function DMAICToolkit({ onBackToLanding }: DMAICToolkitProps) {
               </Button>
               <div className="border-l border-border pl-4">
                 <h1 className="text-2xl font-bold text-foreground">Six Sigma DMAIC Toolkit</h1>
-                <p className="text-sm text-muted-foreground">Professional quality improvement tools</p>
+                <p className="text-sm text-muted-foreground">
+                  {currentProject ? currentProject.name : 'Professional quality improvement tools'}
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowProjectLibrary(true)}
+                className="gap-2"
+              >
+                <FolderOpen className="h-4 w-4" />
+                Projects
+              </Button>
+              {currentProject && (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={exportProject}
+                    className="gap-2"
+                  >
+                    <Save className="h-4 w-4" />
+                    Export
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleExportPDF}
+                    className="gap-2"
+                  >
+                    <Download className="h-4 w-4" />
+                    PDF
+                  </Button>
+                </>
+              )}
               <Badge variant="outline" className="text-primary">
                 21 Tools Available
               </Badge>
