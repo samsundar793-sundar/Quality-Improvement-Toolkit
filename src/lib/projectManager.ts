@@ -9,13 +9,16 @@ export interface ProjectData {
   description: string;
   createdAt: string;
   updatedAt: string;
+  // Multiple methodology support
+  enabledMethodologies: string[]; // Array of methodology IDs
+  currentMethodology: string; // Currently active methodology ID
   currentPhase: string;
   toolsData: Record<string, any>;
   notes: string;
 }
 
-const STORAGE_KEY = 'dmaic_projects';
-const CURRENT_PROJECT_KEY = 'dmaic_current_project';
+const STORAGE_KEY = 'quality_toolkit_projects';
+const CURRENT_PROJECT_KEY = 'quality_toolkit_current_project';
 
 export class ProjectManager {
   /**
@@ -65,13 +68,15 @@ export class ProjectManager {
   /**
    * Create a new project
    */
-  static createProject(name: string, description: string = ''): ProjectData {
+  static createProject(name: string, description: string = '', methodologies: string[] = ['dmaic']): ProjectData {
     const project: ProjectData = {
       id: `project_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       name,
       description,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      enabledMethodologies: methodologies,
+      currentMethodology: methodologies[0] || 'dmaic',
       currentPhase: 'define',
       toolsData: {},
       notes: ''
