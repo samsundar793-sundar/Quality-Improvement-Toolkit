@@ -20,41 +20,49 @@ interface LandingPageProps {
 export function LandingPage({ onGetStarted }: LandingPageProps) {
   const [isHovered, setIsHovered] = useState(false);
 
+  const methodologies = [
+    { name: "DMAIC", description: "Define, Measure, Analyze, Improve, Control" },
+    { name: "8D", description: "8 Disciplines Problem Solving" },
+    { name: "APQP", description: "Advanced Product Quality Planning" },
+    { name: "Lean", description: "Lean Improvement Cycle" },
+    { name: "Kaizen", description: "Continuous Improvement" },
+  ];
+
   const features = [
     {
       icon: Target,
-      title: "Define Phase",
-      description: "Project Charter, SIPOC Diagrams, Voice of Customer analysis to set clear objectives.",
-      tools: "3 Tools"
+      title: "9 Methodologies",
+      description: "DMAIC, DMADV, DMEDI, APQP, PPAP, 8D, Lean, Kaizen, PDCA - all in one toolkit.",
+      tools: "Complete"
     },
     {
       icon: BarChart3,
-      title: "Measure Phase", 
-      description: "Gage R&R, Histograms, Pareto Charts, Control Charts for comprehensive data analysis.",
-      tools: "8 Tools"
+      title: "60+ Professional Tools", 
+      description: "From Project Charter to Control Plans, every tool you need for quality improvement.",
+      tools: "Extensive"
     },
     {
       icon: TrendingUp,
-      title: "Analyze Phase",
-      description: "5 Why Analysis, Regression, Hypothesis Testing to identify root causes.",
-      tools: "4 Tools"
+      title: "Multi-Methodology Projects",
+      description: "Enable multiple methodologies per project and switch between them anytime.",
+      tools: "Flexible"
     },
     {
       icon: Settings,
-      title: "Improve Phase",
-      description: "Solution Prioritization, Pilot Testing, Performance Comparison tools.",
-      tools: "3 Tools"
+      title: "Industry Standards",
+      description: "APQP & PPAP for automotive, 8D for problem solving, Lean for waste reduction.",
+      tools: "Certified"
     },
     {
       icon: FileSpreadsheet,
-      title: "Control Phase",
-      description: "Control Plans, SOP Management, Monitoring Dashboards for sustainability.",
-      tools: "3 Tools"
+      title: "Data Integration",
+      description: "Excel templates, data upload, PDF reports, and project export/import.",
+      tools: "Seamless"
     },
     {
       icon: LineChartIcon,
       title: "Advanced Analytics",
-      description: "Statistical analysis, data visualization, and export capabilities.",
+      description: "Statistical analysis, visualizations, Gage R&R, Process Capability, and more.",
       tools: "Built-in"
     }
   ];
@@ -67,13 +75,13 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
         <div className="relative z-10 container mx-auto px-4 py-24">
           <div className="text-center max-w-4xl mx-auto">
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 animate-fade-in">
-              Six Sigma
+              Quality Improvement
               <span className="block bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-                DMAIC Toolkit
+                Toolkit
               </span>
             </h1>
             <p className="text-xl md:text-2xl text-blue-100 mb-4 animate-slide-up max-w-2xl mx-auto">
-              Professional-grade statistical analysis and quality improvement tools for Six Sigma practitioners
+              Professional-grade tools for DMAIC, 8D, APQP, Lean, Kaizen and more quality methodologies
             </p>
             <p className="text-sm md:text-base text-blue-200/80 mb-8 animate-slide-up max-w-2xl mx-auto">
               Created By SAMSUNDAR A • Powered by Lovable AI
@@ -97,15 +105,29 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
         </div>
       </div>
 
+      {/* Methodologies Bar */}
+      <div className="py-8 bg-muted/50 border-b">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-wrap justify-center gap-4">
+            {methodologies.map((m, index) => (
+              <div key={index} className="text-center px-4 py-2">
+                <span className="font-bold text-primary">{m.name}</span>
+                <span className="text-xs text-muted-foreground block">{m.description}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* Features Grid */}
       <div className="py-24 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-foreground mb-4">
-              Complete DMAIC Implementation
+              Complete Quality Management Suite
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              21 professional tools covering every phase of the Six Sigma methodology
+              9 methodologies, 60+ tools, unlimited projects - everything for quality excellence
             </p>
           </div>
           
@@ -208,7 +230,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
             onClick={onGetStarted}
             className="animate-glow-pulse"
           >
-            Launch DMAIC Toolkit
+            Launch Quality Toolkit
           </Button>
         </div>
       </div>
