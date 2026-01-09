@@ -14,9 +14,10 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 
 interface ProjectLibraryProps {
   onClose: () => void;
+  onProjectSelected?: () => void;
 }
 
-export function ProjectLibrary({ onClose }: ProjectLibraryProps) {
+export function ProjectLibrary({ onClose, onProjectSelected }: ProjectLibraryProps) {
   const { projects, currentProject, createProject, loadProject, deleteProject, exportProject, importProject } = useProject();
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
@@ -42,6 +43,7 @@ export function ProjectLibrary({ onClose }: ProjectLibraryProps) {
     setNewProjectDescription('');
     setShowCreateDialog(false);
     onClose();
+    onProjectSelected?.();
   };
 
   const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -241,6 +243,7 @@ export function ProjectLibrary({ onClose }: ProjectLibraryProps) {
                     <div className="flex-1" onClick={() => {
                       loadProject(project.id);
                       onClose();
+                      onProjectSelected?.();
                     }}>
                       <CardTitle className="text-lg">{project.name}</CardTitle>
                       <CardDescription className="line-clamp-2">
@@ -263,6 +266,7 @@ export function ProjectLibrary({ onClose }: ProjectLibraryProps) {
                 <CardContent onClick={() => {
                   loadProject(project.id);
                   onClose();
+                  onProjectSelected?.();
                 }}>
                   <div className="space-y-2 text-sm text-muted-foreground">
                     <div className="flex justify-between">

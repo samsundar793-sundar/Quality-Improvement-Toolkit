@@ -87,7 +87,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
                 onMouseLeave={() => setIsHovered(false)}
                 className={`${isHovered ? 'animate-glow-pulse' : ''}`}
               >
-                Get Started with DMAIC
+                Get Started
               </Button>
               <Button variant="outline" size="xl" className="border-white/30 text-white hover:bg-white/10">
                 View Sample Tools
