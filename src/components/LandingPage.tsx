@@ -218,11 +218,11 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
       <div className="py-24 bg-card/50">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold text-foreground mb-6">
-            Ready to Start Your Six Sigma Journey?
+            Ready to Start Your Quality Journey?
           </h2>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Access professional-grade tools with sample data, file upload capabilities, 
-            and comprehensive export options.
+            Access professional-grade tools with sample data, Excel templates, 
+            PDF reports, and comprehensive export options.
           </p>
           <Button 
             variant="analytics" 
