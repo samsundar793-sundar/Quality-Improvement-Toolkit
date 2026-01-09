@@ -6,7 +6,7 @@ interface ProjectContextType {
   currentProject: ProjectData | null;
   projects: ProjectData[];
   isLoading: boolean;
-  createProject: (name: string, description?: string) => void;
+  createProject: (name: string, description?: string, methodologies?: string[]) => void;
   loadProject: (id: string) => void;
   deleteProject: (id: string) => void;
   updateProjectInfo: (updates: Partial<ProjectData>) => void;
@@ -69,9 +69,9 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({ children }) =>
     setIsLoading(false);
   };
 
-  const createProject = (name: string, description: string = '') => {
+  const createProject = (name: string, description: string = '', methodologies: string[] = ['dmaic']) => {
     try {
-      const project = ProjectManager.createProject(name, description);
+      const project = ProjectManager.createProject(name, description, methodologies);
       setProjects(prev => [...prev, project]);
       setCurrentProject(project);
       ProjectManager.setCurrentProject(project.id);
