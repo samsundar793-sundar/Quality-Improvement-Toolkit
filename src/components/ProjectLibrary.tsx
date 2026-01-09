@@ -4,10 +4,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { useProject } from '@/contexts/ProjectContext';
 import { ProjectManager } from '@/lib/projectManager';
 import { ExcelTemplates } from '@/lib/excelTemplates';
 import { PDFExporter } from '@/lib/pdfExport';
+import { METHODOLOGIES, getMethodologyToolCount } from '@/lib/methodologies';
 import { FolderOpen, Plus, Trash2, Download, Upload, FileDown, FileSpreadsheet, HardDrive, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
@@ -23,10 +27,24 @@ export function ProjectLibrary({ onClose, onProjectSelected }: ProjectLibraryPro
   const [showTemplates, setShowTemplates] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
   const [newProjectDescription, setNewProjectDescription] = useState('');
+  const [selectedMethodologies, setSelectedMethodologies] = useState<string[]>(['dmaic']);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const { toast } = useToast();
 
   const storageInfo = ProjectManager.getStorageInfo();
+
+  const toggleMethodology = (methodologyId: string) => {
+    setSelectedMethodologies(prev => {
+      if (prev.includes(methodologyId)) {
+        // Don't allow deselecting all
+        if (prev.length > 1) {
+          return prev.filter(id => id !== methodologyId);
+        }
+        return prev;
+      }
+      return [...prev, methodologyId];
+    });
+  };
 
   const handleCreateProject = () => {
     if (!newProjectName.trim()) {
@@ -38,9 +56,19 @@ export function ProjectLibrary({ onClose, onProjectSelected }: ProjectLibraryPro
       return;
     }
 
-    createProject(newProjectName, newProjectDescription);
+    if (selectedMethodologies.length === 0) {
+      toast({
+        title: "Validation Error",
+        description: "Please select at least one methodology.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    createProject(newProjectName, newProjectDescription, selectedMethodologies);
     setNewProjectName('');
     setNewProjectDescription('');
+    setSelectedMethodologies(['dmaic']);
     setShowCreateDialog(false);
     onClose();
     onProjectSelected?.();
@@ -86,7 +114,7 @@ export function ProjectLibrary({ onClose, onProjectSelected }: ProjectLibraryPro
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-3xl font-bold text-foreground">Project Library</h1>
-            <p className="text-muted-foreground">Manage your Six Sigma DMAIC projects</p>
+            <p className="text-muted-foreground">Manage your quality improvement projects</p>
           </div>
           <Button variant="ghost" size="icon" onClick={onClose}>
             <X className="h-6 w-6" />
@@ -102,14 +130,14 @@ export function ProjectLibrary({ onClose, onProjectSelected }: ProjectLibraryPro
                 New Project
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
               <DialogHeader>
                 <DialogTitle>Create New Project</DialogTitle>
                 <DialogDescription>
-                  Start a new Six Sigma DMAIC project
+                  Start a new quality improvement project with your preferred methodologies
                 </DialogDescription>
               </DialogHeader>
-              <div className="space-y-4 py-4">
+              <div className="space-y-4 py-4 flex-1 overflow-hidden flex flex-col">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Project Name</label>
                   <Input
@@ -124,8 +152,53 @@ export function ProjectLibrary({ onClose, onProjectSelected }: ProjectLibraryPro
                     placeholder="Project description..."
                     value={newProjectDescription}
                     onChange={(e) => setNewProjectDescription(e.target.value)}
-                    rows={3}
+                    rows={2}
                   />
+                </div>
+                <div className="space-y-2 flex-1 overflow-hidden flex flex-col">
+                  <label className="text-sm font-medium">Select Methodologies</label>
+                  <p className="text-xs text-muted-foreground">Choose one or more methodologies for this project</p>
+                  <ScrollArea className="flex-1 border rounded-lg p-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {METHODOLOGIES.map(methodology => {
+                        const isSelected = selectedMethodologies.includes(methodology.id);
+                        const toolCount = getMethodologyToolCount(methodology.id);
+                        return (
+                          <div
+                            key={methodology.id}
+                            className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                              isSelected ? 'border-primary bg-primary/5' : 'hover:border-muted-foreground/50'
+                            }`}
+                            onClick={() => toggleMethodology(methodology.id)}
+                          >
+                            <div className="flex items-start gap-3">
+                              <Checkbox 
+                                checked={isSelected} 
+                                onCheckedChange={() => toggleMethodology(methodology.id)}
+                              />
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <methodology.icon className="h-4 w-4 text-primary flex-shrink-0" />
+                                  <span className="font-medium">{methodology.name}</span>
+                                </div>
+                                <p className="text-xs text-muted-foreground mt-1 line-clamp-1">
+                                  {methodology.fullName}
+                                </p>
+                                <div className="flex gap-2 mt-2">
+                                  <Badge variant="outline" className="text-xs">
+                                    {methodology.phases.length} phases
+                                  </Badge>
+                                  <Badge variant="outline" className="text-xs">
+                                    {toolCount} tools
+                                  </Badge>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </ScrollArea>
                 </div>
               </div>
               <DialogFooter>
@@ -270,10 +343,22 @@ export function ProjectLibrary({ onClose, onProjectSelected }: ProjectLibraryPro
                 }}>
                   <div className="space-y-2 text-sm text-muted-foreground">
                     <div className="flex justify-between">
-                      <span>Phase:</span>
-                      <span className="font-medium text-foreground capitalize">
-                        {project.currentPhase}
-                      </span>
+                      <span>Methodologies:</span>
+                      <div className="flex flex-wrap gap-1 justify-end">
+                        {(project.enabledMethodologies || ['dmaic']).slice(0, 2).map(m => {
+                          const methodology = METHODOLOGIES.find(meth => meth.id === m);
+                          return methodology ? (
+                            <Badge key={m} variant="secondary" className="text-xs">
+                              {methodology.name}
+                            </Badge>
+                          ) : null;
+                        })}
+                        {(project.enabledMethodologies || ['dmaic']).length > 2 && (
+                          <Badge variant="outline" className="text-xs">
+                            +{(project.enabledMethodologies || ['dmaic']).length - 2}
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                     <div className="flex justify-between">
                       <span>Tools Used:</span>
