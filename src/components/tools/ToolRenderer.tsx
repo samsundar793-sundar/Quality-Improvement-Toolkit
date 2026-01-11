@@ -33,6 +33,15 @@ const SOPTemplateTool = lazy(() => import("./SOPTemplateTool").then(m => ({ defa
 const PokaYokeTool = lazy(() => import("./PokaYokeTool").then(m => ({ default: m.PokaYokeTool })));
 const AuditChecklistTool = lazy(() => import("./AuditChecklistTool").then(m => ({ default: m.AuditChecklistTool })));
 const MonitoringDashboardTool = lazy(() => import("./MonitoringDashboardTool").then(m => ({ default: m.MonitoringDashboardTool })));
+// New methodology tools
+const ProblemStatementTool = lazy(() => import("./ProblemStatementTool").then(m => ({ default: m.ProblemStatementTool })));
+const TeamCharterTool = lazy(() => import("./TeamCharterTool").then(m => ({ default: m.TeamCharterTool })));
+const ValueStreamMapTool = lazy(() => import("./ValueStreamMapTool").then(m => ({ default: m.ValueStreamMapTool })));
+const WasteAnalysisTool = lazy(() => import("./WasteAnalysisTool").then(m => ({ default: m.WasteAnalysisTool })));
+const FiveS_AuditTool = lazy(() => import("./FiveS_AuditTool").then(m => ({ default: m.FiveS_AuditTool })));
+const BrainstormingTool = lazy(() => import("./BrainstormingTool").then(m => ({ default: m.BrainstormingTool })));
+const ImplementationPlanTool = lazy(() => import("./ImplementationPlanTool").then(m => ({ default: m.ImplementationPlanTool })));
+const LessonsLearnedTool = lazy(() => import("./LessonsLearnedTool").then(m => ({ default: m.LessonsLearnedTool })));
 
 // Tool component mapping
 const TOOL_COMPONENTS: Record<string, React.LazyExoticComponent<React.ComponentType<any>>> = {
@@ -66,6 +75,15 @@ const TOOL_COMPONENTS: Record<string, React.LazyExoticComponent<React.ComponentT
   'poka-yoke': PokaYokeTool,
   'audit-checklist': AuditChecklistTool,
   'monitoring-dashboard': MonitoringDashboardTool,
+  // New tools
+  'problem-statement': ProblemStatementTool,
+  'team-charter': TeamCharterTool,
+  'value-stream-map': ValueStreamMapTool,
+  'waste-analysis': WasteAnalysisTool,
+  '5s-audit': FiveS_AuditTool,
+  'brainstorming': BrainstormingTool,
+  'implementation-plan': ImplementationPlanTool,
+  'lessons-learned': LessonsLearnedTool,
 };
 
 interface ToolRendererProps {
