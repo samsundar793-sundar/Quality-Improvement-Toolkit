@@ -42,6 +42,15 @@ const FiveS_AuditTool = lazy(() => import("./FiveS_AuditTool").then(m => ({ defa
 const BrainstormingTool = lazy(() => import("./BrainstormingTool").then(m => ({ default: m.BrainstormingTool })));
 const ImplementationPlanTool = lazy(() => import("./ImplementationPlanTool").then(m => ({ default: m.ImplementationPlanTool })));
 const LessonsLearnedTool = lazy(() => import("./LessonsLearnedTool").then(m => ({ default: m.LessonsLearnedTool })));
+// Additional tools
+const RunChartTool = lazy(() => import("./RunChartTool").then(m => ({ default: m.RunChartTool })));
+const HypothesisTestingTool = lazy(() => import("./HypothesisTestingTool").then(m => ({ default: m.HypothesisTestingTool })));
+const IsIsNotTool = lazy(() => import("./IsIsNotTool").then(m => ({ default: m.IsIsNotTool })));
+const PilotPlanTool = lazy(() => import("./PilotPlanTool").then(m => ({ default: m.PilotPlanTool })));
+const HandoffPlanTool = lazy(() => import("./HandoffPlanTool").then(m => ({ default: m.HandoffPlanTool })));
+const ResponsePlanTool = lazy(() => import("./ResponsePlanTool").then(m => ({ default: m.ResponsePlanTool })));
+const StandardWorkTool = lazy(() => import("./StandardWorkTool").then(m => ({ default: m.StandardWorkTool })));
+const ProcessFlowTool = lazy(() => import("./ProcessFlowTool").then(m => ({ default: m.ProcessFlowTool })));
 
 // Tool component mapping
 const TOOL_COMPONENTS: Record<string, React.LazyExoticComponent<React.ComponentType<any>>> = {
@@ -84,6 +93,15 @@ const TOOL_COMPONENTS: Record<string, React.LazyExoticComponent<React.ComponentT
   'brainstorming': BrainstormingTool,
   'implementation-plan': ImplementationPlanTool,
   'lessons-learned': LessonsLearnedTool,
+  // Additional tools
+  'run-chart': RunChartTool,
+  'hypothesis-testing': HypothesisTestingTool,
+  'is-is-not': IsIsNotTool,
+  'pilot-plan': PilotPlanTool,
+  'handoff-plan': HandoffPlanTool,
+  'response-plan': ResponsePlanTool,
+  'standard-work': StandardWorkTool,
+  'process-flow': ProcessFlowTool,
 };
 
 interface ToolRendererProps {
