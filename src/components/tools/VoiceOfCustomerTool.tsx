@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Users, Download, Plus, X, RotateCcw, Upload, BarChart3 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from "recharts";
-import * as XLSX from 'xlsx';
+import { readExcelFile } from "@/lib/excelUtils";
 
 interface CustomerRequirement {
   id: string;
@@ -170,46 +170,39 @@ Analysis Date: ${new Date().toLocaleDateString()}
     }]);
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      try {
-        const bstr = evt.target?.result;
-        const wb = XLSX.read(bstr, { type: 'binary' });
-        const wsname = wb.SheetNames[0];
-        const ws = wb.Sheets[wsname];
-        const data = XLSX.utils.sheet_to_json(ws);
+    try {
+      const buffer = await file.arrayBuffer();
+      const { jsonData } = await readExcelFile(buffer);
 
-        const importedReqs: CustomerRequirement[] = data.map((row: any, index: number) => ({
-          id: (index + 1).toString(),
-          requirement: row.requirement || row.Requirement || "",
-          importance: (row.importance || row.Importance || "Medium") as any,
-          currentRating: parseInt(row.currentRating || row["Current Rating"] || "1"),
-          targetRating: parseInt(row.targetRating || row["Target Rating"] || "5"),
-          gap: 0
-        })).map(req => ({
-          ...req,
-          gap: req.targetRating - req.currentRating
-        }));
+      const importedReqs: CustomerRequirement[] = jsonData.map((row: any, index: number) => ({
+        id: (index + 1).toString(),
+        requirement: row.requirement || row.Requirement || "",
+        importance: (row.importance || row.Importance || "Medium") as any,
+        currentRating: parseInt(row.currentRating || row["Current Rating"] || "1"),
+        targetRating: parseInt(row.targetRating || row["Target Rating"] || "5"),
+        gap: 0
+      })).map(req => ({
+        ...req,
+        gap: req.targetRating - req.currentRating
+      }));
 
-        setRequirements(importedReqs.length > 0 ? importedReqs : [requirements[0]]);
-        
-        toast({
-          title: "Data Imported",
-          description: `Successfully imported ${importedReqs.length} requirements from Excel.`
-        });
-      } catch (error) {
-        toast({
-          title: "Import Failed",
-          description: "Could not read the Excel file. Please check the format.",
-          variant: "destructive"
-        });
-      }
-    };
-    reader.readAsBinaryString(file);
+      setRequirements(importedReqs.length > 0 ? importedReqs : [requirements[0]]);
+      
+      toast({
+        title: "Data Imported",
+        description: `Successfully imported ${importedReqs.length} requirements from Excel.`
+      });
+    } catch (error) {
+      toast({
+        title: "Import Failed",
+        description: "Could not read the Excel file. Please check the format.",
+        variant: "destructive"
+      });
+    }
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 

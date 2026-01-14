@@ -1,8 +1,9 @@
-import * as XLSX from 'xlsx';
+import { downloadExcelTemplate } from './excelUtils';
 
 /**
  * Excel Template Generation for DMAIC Tools
  * Provides pre-formatted templates for easy data upload
+ * Uses exceljs for secure Excel generation
  */
 
 export class ExcelTemplates {
@@ -207,16 +208,8 @@ export class ExcelTemplates {
    * Download template helper
    */
   private static downloadTemplate(data: any[][], filename: string): void {
-    const ws = XLSX.utils.aoa_to_sheet(data);
-    
-    // Set column widths
-    const colWidths = data[0].map(() => ({ wch: 20 }));
-    ws['!cols'] = colWidths;
-    
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Template');
-    
-    XLSX.writeFile(wb, `${filename}_${new Date().toISOString().split('T')[0]}.xlsx`);
+    const dateStr = new Date().toISOString().split('T')[0];
+    downloadExcelTemplate(data, `${filename}_${dateStr}.xlsx`, 'Template');
   }
 
   /**
@@ -224,19 +217,19 @@ export class ExcelTemplates {
    */
   static getAllTemplates(): Array<{ name: string; description: string; generator: () => void }> {
     return [
-      { name: 'Gage R&R', description: 'Measurement system analysis template', generator: this.generateGageRRTemplate },
-      { name: 'Histogram', description: 'Distribution analysis template', generator: this.generateHistogramTemplate },
-      { name: 'Pareto Chart', description: 'Defect prioritization template', generator: this.generateParetoTemplate },
-      { name: 'Control Chart', description: 'Process monitoring template', generator: this.generateControlChartTemplate },
-      { name: 'Process Capability', description: 'Capability analysis template', generator: this.generateProcessCapabilityTemplate },
-      { name: 'Scatter Plot', description: 'Correlation analysis template', generator: this.generateScatterPlotTemplate },
-      { name: 'Box Plot', description: 'Distribution comparison template', generator: this.generateBoxPlotTemplate },
-      { name: 'FMEA', description: 'Failure mode analysis template', generator: this.generateFMEATemplate },
-      { name: 'DOE', description: 'Design of experiments template', generator: this.generateDOETemplate },
-      { name: 'Regression', description: 'Regression analysis template', generator: this.generateRegressionTemplate },
-      { name: 'Voice of Customer', description: 'Customer feedback template', generator: this.generateVOCTemplate },
-      { name: 'Check Sheet', description: 'Data collection template', generator: this.generateCheckSheetTemplate },
-      { name: 'Audit Checklist', description: 'Audit management template', generator: this.generateAuditTemplate },
+      { name: 'Gage R&R', description: 'Measurement system analysis template', generator: this.generateGageRRTemplate.bind(this) },
+      { name: 'Histogram', description: 'Distribution analysis template', generator: this.generateHistogramTemplate.bind(this) },
+      { name: 'Pareto Chart', description: 'Defect prioritization template', generator: this.generateParetoTemplate.bind(this) },
+      { name: 'Control Chart', description: 'Process monitoring template', generator: this.generateControlChartTemplate.bind(this) },
+      { name: 'Process Capability', description: 'Capability analysis template', generator: this.generateProcessCapabilityTemplate.bind(this) },
+      { name: 'Scatter Plot', description: 'Correlation analysis template', generator: this.generateScatterPlotTemplate.bind(this) },
+      { name: 'Box Plot', description: 'Distribution comparison template', generator: this.generateBoxPlotTemplate.bind(this) },
+      { name: 'FMEA', description: 'Failure mode analysis template', generator: this.generateFMEATemplate.bind(this) },
+      { name: 'DOE', description: 'Design of experiments template', generator: this.generateDOETemplate.bind(this) },
+      { name: 'Regression', description: 'Regression analysis template', generator: this.generateRegressionTemplate.bind(this) },
+      { name: 'Voice of Customer', description: 'Customer feedback template', generator: this.generateVOCTemplate.bind(this) },
+      { name: 'Check Sheet', description: 'Data collection template', generator: this.generateCheckSheetTemplate.bind(this) },
+      { name: 'Audit Checklist', description: 'Audit management template', generator: this.generateAuditTemplate.bind(this) },
     ];
   }
 }

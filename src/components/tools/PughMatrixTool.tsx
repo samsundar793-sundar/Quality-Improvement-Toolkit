@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { GitCompare, Download, RotateCcw, Plus, X, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import * as XLSX from "xlsx";
+import { readExcelFile } from "@/lib/excelUtils";
 
 interface Criterion {
   id: string;
@@ -37,69 +37,60 @@ export function PughMatrixTool() {
   ]);
   const [baselineSolution, setBaselineSolution] = useState("Current Process");
 
-  const handleExcelUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleExcelUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const data = new Uint8Array(e.target?.result as ArrayBuffer);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+    try {
+      const buffer = await file.arrayBuffer();
+      const { data: jsonData } = await readExcelFile(buffer);
+      
+      if (jsonData.length > 2) {
+        // First row: headers (skip first cell, then solutions)
+        const headerRow = jsonData[0] as any[];
+        const solutionNames = headerRow.slice(2); // Skip 'Criteria' and 'Weight' columns
         
-        if (jsonData.length > 2) {
-          // First row: headers (skip first cell, then solutions)
-          const headerRow = jsonData[0] as any[];
-          const solutionNames = headerRow.slice(2); // Skip 'Criteria' and 'Weight' columns
-          
-          // Second row: weights
-          const weightRow = jsonData[1] as any[];
-          
-          const newCriteria: Criterion[] = [];
-          const newSolutions: Solution[] = solutionNames.map((name: string, index: number) => ({
-            id: (index + 1).toString(),
-            name: name?.toString() || `Solution ${index + 1}`,
-            scores: {}
-          }));
-          
-          // Process criteria and scores
-          for (let i = 2; i < jsonData.length; i++) {
-            const row = jsonData[i] as any[];
-            if (row[0]) {
-              const criterionId = (i - 1).toString();
-              newCriteria.push({
-                id: criterionId,
-                name: row[0].toString(),
-                weight: parseInt(row[1]?.toString()) || 1
-              });
-              
-              // Add scores for each solution
-              for (let j = 0; j < solutionNames.length; j++) {
-                if (newSolutions[j]) {
-                  newSolutions[j].scores[criterionId] = parseInt(row[j + 2]?.toString()) || 0;
-                }
+        const newCriteria: Criterion[] = [];
+        const newSolutions: Solution[] = solutionNames.map((name: string, index: number) => ({
+          id: (index + 1).toString(),
+          name: name?.toString() || `Solution ${index + 1}`,
+          scores: {}
+        }));
+        
+        // Process criteria and scores
+        for (let i = 2; i < jsonData.length; i++) {
+          const row = jsonData[i] as any[];
+          if (row[0]) {
+            const criterionId = (i - 1).toString();
+            newCriteria.push({
+              id: criterionId,
+              name: row[0].toString(),
+              weight: parseInt(row[1]?.toString()) || 1
+            });
+            
+            // Add scores for each solution
+            for (let j = 0; j < solutionNames.length; j++) {
+              if (newSolutions[j]) {
+                newSolutions[j].scores[criterionId] = parseInt(row[j + 2]?.toString()) || 0;
               }
             }
           }
-          
-          setCriteria(newCriteria);
-          setSolutions(newSolutions);
-          toast({
-            title: "Excel Data Imported",
-            description: `Imported ${newCriteria.length} criteria and ${newSolutions.length} solutions.`
-          });
         }
-      } catch (error) {
+        
+        setCriteria(newCriteria);
+        setSolutions(newSolutions);
         toast({
-          title: "Import Error",
-          description: "Failed to parse Excel file. Expected format: Criteria, Weight, Solution1, Solution2...",
-          variant: "destructive"
+          title: "Excel Data Imported",
+          description: `Imported ${newCriteria.length} criteria and ${newSolutions.length} solutions.`
         });
       }
-    };
-    reader.readAsArrayBuffer(file);
+    } catch (error) {
+      toast({
+        title: "Import Error",
+        description: "Failed to parse Excel file. Expected format: Criteria, Weight, Solution1, Solution2...",
+        variant: "destructive"
+      });
+    }
   };
 
   const addCriterion = () => {

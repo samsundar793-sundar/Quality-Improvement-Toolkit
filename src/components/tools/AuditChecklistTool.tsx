@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { ClipboardCheck, Download, RotateCcw, Plus, X, Upload, CheckCircle2, AlertCircle, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import * as XLSX from "xlsx";
+import { readExcelFile } from "@/lib/excelUtils";
 
 interface ChecklistItem {
   id: string;
@@ -105,54 +105,48 @@ export function AuditChecklistTool() {
     }
   ];
 
-  const handleExcelUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleExcelUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const data = new Uint8Array(e.target?.result as ArrayBuffer);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-        
-        if (jsonData.length > 1) {
-          const newItems: ChecklistItem[] = [];
-          for (let i = 1; i < jsonData.length; i++) {
-            const row = jsonData[i] as any[];
-            if (row[0] && row[1]) {
-              newItems.push({
-                id: i.toString(),
-                category: row[0]?.toString() || "",
-                item: row[1]?.toString() || "",
-                description: row[2]?.toString() || "",
-                compliance: (row[3]?.toString() as any) || "Pending",
-                severity: (row[4]?.toString() as any) || "Medium",
-                evidence: row[5]?.toString() || "",
-                corrective_action: row[6]?.toString() || "",
-                responsible: row[7]?.toString() || "",
-                due_date: row[8]?.toString() || "",
-                notes: row[9]?.toString() || ""
-              });
-            }
+    try {
+      const buffer = await file.arrayBuffer();
+      const { data: jsonData } = await readExcelFile(buffer);
+      
+      if (jsonData.length > 1) {
+        const newItems: ChecklistItem[] = [];
+        for (let i = 1; i < jsonData.length; i++) {
+          const row = jsonData[i] as any[];
+          if (row[0] && row[1]) {
+            newItems.push({
+              id: i.toString(),
+              category: row[0]?.toString() || "",
+              item: row[1]?.toString() || "",
+              description: row[2]?.toString() || "",
+              compliance: (row[3]?.toString() as any) || "Pending",
+              severity: (row[4]?.toString() as any) || "Medium",
+              evidence: row[5]?.toString() || "",
+              corrective_action: row[6]?.toString() || "",
+              responsible: row[7]?.toString() || "",
+              due_date: row[8]?.toString() || "",
+              notes: row[9]?.toString() || ""
+            });
           }
-          
-          setItems(newItems);
-          toast({
-            title: "Excel Data Imported",
-            description: `Imported ${newItems.length} checklist items.`
-          });
         }
-      } catch (error) {
+        
+        setItems(newItems);
         toast({
-          title: "Import Error",
-          description: "Failed to parse Excel file. Please check the format.",
-          variant: "destructive"
+          title: "Excel Data Imported",
+          description: `Imported ${newItems.length} checklist items.`
         });
       }
-    };
-    reader.readAsArrayBuffer(file);
+    } catch (error) {
+      toast({
+        title: "Import Error",
+        description: "Failed to parse Excel file. Please check the format.",
+        variant: "destructive"
+      });
+    }
   };
 
   const loadTemplate = (template: AuditTemplate) => {
