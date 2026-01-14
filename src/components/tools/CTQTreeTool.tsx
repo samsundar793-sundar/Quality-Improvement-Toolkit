@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TreePine, Download, RotateCcw, Plus, X, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import * as XLSX from "xlsx";
+import { readExcelFile } from "@/lib/excelUtils";
 
 interface CTQNode {
   id: string;
@@ -27,60 +27,54 @@ export function CTQTreeTool() {
     { id: "6", text: "99.9% Uptime", level: "specification", parent: "4", children: [] }
   ]);
 
-  const handleExcelUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleExcelUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const data = new Uint8Array(e.target?.result as ArrayBuffer);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+    try {
+      const buffer = await file.arrayBuffer();
+      const { data: jsonData } = await readExcelFile(buffer);
+      
+      // Process Excel data into CTQ format
+      // Expected columns: Level, Text, Parent
+      if (jsonData.length > 1) {
+        const newNodes: CTQNode[] = [];
+        for (let i = 1; i < jsonData.length; i++) {
+          const row = jsonData[i] as any[];
+          if (row[0] && row[1]) {
+            newNodes.push({
+              id: (i).toString(),
+              text: row[1].toString(),
+              level: row[0].toLowerCase() as any,
+              parent: row[2]?.toString(),
+              children: []
+            });
+          }
+        }
         
-        // Process Excel data into CTQ format
-        // Expected columns: Level, Text, Parent
-        if (jsonData.length > 1) {
-          const newNodes: CTQNode[] = [];
-          for (let i = 1; i < jsonData.length; i++) {
-            const row = jsonData[i] as any[];
-            if (row[0] && row[1]) {
-              newNodes.push({
-                id: (i).toString(),
-                text: row[1].toString(),
-                level: row[0].toLowerCase() as any,
-                parent: row[2]?.toString(),
-                children: []
-              });
+        // Build parent-child relationships
+        newNodes.forEach(node => {
+          if (node.parent) {
+            const parent = newNodes.find(n => n.id === node.parent);
+            if (parent && !parent.children.includes(node.id)) {
+              parent.children.push(node.id);
             }
           }
-          
-          // Build parent-child relationships
-          newNodes.forEach(node => {
-            if (node.parent) {
-              const parent = newNodes.find(n => n.id === node.parent);
-              if (parent && !parent.children.includes(node.id)) {
-                parent.children.push(node.id);
-              }
-            }
-          });
-          
-          setNodes(newNodes);
-          toast({
-            title: "Excel Data Imported",
-            description: `Imported ${newNodes.length} CTQ tree nodes.`
-          });
-        }
-      } catch (error) {
+        });
+        
+        setNodes(newNodes);
         toast({
-          title: "Import Error",
-          description: "Failed to parse Excel file. Please check the format.",
-          variant: "destructive"
+          title: "Excel Data Imported",
+          description: `Imported ${newNodes.length} CTQ tree nodes.`
         });
       }
-    };
-    reader.readAsArrayBuffer(file);
+    } catch (error) {
+      toast({
+        title: "Import Error",
+        description: "Failed to parse Excel file. Please check the format.",
+        variant: "destructive"
+      });
+    }
   };
 
   const addNode = (parentId: string, level: CTQNode["level"]) => {

@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Shield, Download, RotateCcw, Plus, X, Upload, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import * as XLSX from "xlsx";
+import { readExcelFile } from "@/lib/excelUtils";
 
 interface PokaYokeItem {
   id: string;
@@ -63,56 +63,50 @@ export function PokaYokeTool() {
     }
   ]);
 
-  const handleExcelUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleExcelUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const data = new Uint8Array(e.target?.result as ArrayBuffer);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-        
-        if (jsonData.length > 1) {
-          const newItems: PokaYokeItem[] = [];
-          for (let i = 1; i < jsonData.length; i++) {
-            const row = jsonData[i] as any[];
-            if (row[0] && row[1]) {
-              newItems.push({
-                id: i.toString(),
-                processStep: row[0]?.toString() || "",
-                potentialError: row[1]?.toString() || "",
-                errorType: (row[2]?.toString() as any) || "Prevention",
-                mechanism: row[3]?.toString() || "",
-                implementation: row[4]?.toString() || "",
-                status: (row[5]?.toString() as any) || "Planned",
-                effectiveness: (row[6]?.toString() as any) || "Medium",
-                cost: (row[7]?.toString() as any) || "Medium",
-                priority: (row[8]?.toString() as any) || "Medium",
-                responsible: row[9]?.toString() || "",
-                dueDate: row[10]?.toString() || "",
-                notes: row[11]?.toString() || ""
-              });
-            }
+    try {
+      const buffer = await file.arrayBuffer();
+      const { data: jsonData } = await readExcelFile(buffer);
+      
+      if (jsonData.length > 1) {
+        const newItems: PokaYokeItem[] = [];
+        for (let i = 1; i < jsonData.length; i++) {
+          const row = jsonData[i] as any[];
+          if (row[0] && row[1]) {
+            newItems.push({
+              id: i.toString(),
+              processStep: row[0]?.toString() || "",
+              potentialError: row[1]?.toString() || "",
+              errorType: (row[2]?.toString() as any) || "Prevention",
+              mechanism: row[3]?.toString() || "",
+              implementation: row[4]?.toString() || "",
+              status: (row[5]?.toString() as any) || "Planned",
+              effectiveness: (row[6]?.toString() as any) || "Medium",
+              cost: (row[7]?.toString() as any) || "Medium",
+              priority: (row[8]?.toString() as any) || "Medium",
+              responsible: row[9]?.toString() || "",
+              dueDate: row[10]?.toString() || "",
+              notes: row[11]?.toString() || ""
+            });
           }
-          
-          setItems(newItems);
-          toast({
-            title: "Excel Data Imported",
-            description: `Imported ${newItems.length} Poka-Yoke items.`
-          });
         }
-      } catch (error) {
+        
+        setItems(newItems);
         toast({
-          title: "Import Error",
-          description: "Failed to parse Excel file. Please check the format.",
-          variant: "destructive"
+          title: "Excel Data Imported",
+          description: `Imported ${newItems.length} Poka-Yoke items.`
         });
       }
-    };
-    reader.readAsArrayBuffer(file);
+    } catch (error) {
+      toast({
+        title: "Import Error",
+        description: "Failed to parse Excel file. Please check the format.",
+        variant: "destructive"
+      });
+    }
   };
 
   const addItem = () => {

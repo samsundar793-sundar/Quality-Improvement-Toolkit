@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertTriangle, Download, RotateCcw, Plus, X, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import * as XLSX from "xlsx";
+import { readExcelFile } from "@/lib/excelUtils";
 
 interface FMEAItem {
   id: string;
@@ -51,61 +51,55 @@ export function FMEATool() {
     }
   ]);
 
-  const handleExcelUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleExcelUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const data = new Uint8Array(e.target?.result as ArrayBuffer);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-        
-        if (jsonData.length > 1) {
-          const newItems: FMEAItem[] = [];
-          for (let i = 1; i < jsonData.length; i++) {
-            const row = jsonData[i] as any[];
-            if (row[0] && row[1]) {
-              const severity = parseInt(row[3]?.toString() || '5') || 5;
-              const occurrence = parseInt(row[5]?.toString() || '5') || 5;
-              const detection = parseInt(row[7]?.toString() || '5') || 5;
-              
-              newItems.push({
-                id: i.toString(),
-                processStep: row[0]?.toString() || '',
-                potentialFailure: row[1]?.toString() || '',
-                potentialEffect: row[2]?.toString() || '',
-                severity,
-                potentialCause: row[4]?.toString() || '',
-                occurrence,
-                currentControls: row[6]?.toString() || '',
-                detection,
-                rpn: severity * occurrence * detection,
-                recommendedActions: row[8]?.toString() || '',
-                responsibility: row[9]?.toString() || '',
-                targetDate: row[10]?.toString() || '',
-                actionsTaken: row[11]?.toString() || ''
-              });
-            }
+    try {
+      const buffer = await file.arrayBuffer();
+      const { data: jsonData } = await readExcelFile(buffer);
+      
+      if (jsonData.length > 1) {
+        const newItems: FMEAItem[] = [];
+        for (let i = 1; i < jsonData.length; i++) {
+          const row = jsonData[i] as any[];
+          if (row[0] && row[1]) {
+            const severity = parseInt(row[3]?.toString() || '5') || 5;
+            const occurrence = parseInt(row[5]?.toString() || '5') || 5;
+            const detection = parseInt(row[7]?.toString() || '5') || 5;
+            
+            newItems.push({
+              id: i.toString(),
+              processStep: row[0]?.toString() || '',
+              potentialFailure: row[1]?.toString() || '',
+              potentialEffect: row[2]?.toString() || '',
+              severity,
+              potentialCause: row[4]?.toString() || '',
+              occurrence,
+              currentControls: row[6]?.toString() || '',
+              detection,
+              rpn: severity * occurrence * detection,
+              recommendedActions: row[8]?.toString() || '',
+              responsibility: row[9]?.toString() || '',
+              targetDate: row[10]?.toString() || '',
+              actionsTaken: row[11]?.toString() || ''
+            });
           }
-          
-          setFmeaItems(newItems);
-          toast({
-            title: "Excel Data Imported",
-            description: `Imported ${newItems.length} FMEA items.`
-          });
         }
-      } catch (error) {
+        
+        setFmeaItems(newItems);
         toast({
-          title: "Import Error", 
-          description: "Failed to parse Excel file.",
-          variant: "destructive"
+          title: "Excel Data Imported",
+          description: `Imported ${newItems.length} FMEA items.`
         });
       }
-    };
-    reader.readAsArrayBuffer(file);
+    } catch (error) {
+      toast({
+        title: "Import Error", 
+        description: "Failed to parse Excel file.",
+        variant: "destructive"
+      });
+    }
   };
 
   const addFmeaItem = () => {
