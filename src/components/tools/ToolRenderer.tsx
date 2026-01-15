@@ -51,6 +51,15 @@ const HandoffPlanTool = lazy(() => import("./HandoffPlanTool").then(m => ({ defa
 const ResponsePlanTool = lazy(() => import("./ResponsePlanTool").then(m => ({ default: m.ResponsePlanTool })));
 const StandardWorkTool = lazy(() => import("./StandardWorkTool").then(m => ({ default: m.StandardWorkTool })));
 const ProcessFlowTool = lazy(() => import("./ProcessFlowTool").then(m => ({ default: m.ProcessFlowTool })));
+// FMEA and 8D tools
+const DesignFMEATool = lazy(() => import("./DesignFMEATool").then(m => ({ default: m.DesignFMEATool })));
+const ProcessFMEATool = lazy(() => import("./ProcessFMEATool").then(m => ({ default: m.ProcessFMEATool })));
+const D0SymptomsTool = lazy(() => import("./D0SymptomsTool").then(m => ({ default: m.D0SymptomsTool })));
+const D1TeamFormationTool = lazy(() => import("./D1TeamFormationTool").then(m => ({ default: m.D1TeamFormationTool })));
+const D2ProblemDefinitionTool = lazy(() => import("./D2ProblemDefinitionTool").then(m => ({ default: m.D2ProblemDefinitionTool })));
+const D3ContainmentTool = lazy(() => import("./D3ContainmentTool").then(m => ({ default: m.D3ContainmentTool })));
+const D4RootCauseTool = lazy(() => import("./D4RootCauseTool").then(m => ({ default: m.D4RootCauseTool })));
+const ComparativeAnalysisTool = lazy(() => import("./ComparativeAnalysisTool").then(m => ({ default: m.ComparativeAnalysisTool })));
 
 // Tool component mapping
 const TOOL_COMPONENTS: Record<string, React.LazyExoticComponent<React.ComponentType<any>>> = {
@@ -102,6 +111,15 @@ const TOOL_COMPONENTS: Record<string, React.LazyExoticComponent<React.ComponentT
   'response-plan': ResponsePlanTool,
   'standard-work': StandardWorkTool,
   'process-flow': ProcessFlowTool,
+  // FMEA and 8D tools
+  'design-fmea': DesignFMEATool,
+  'process-fmea': ProcessFMEATool,
+  'd0-symptoms': D0SymptomsTool,
+  'd1-team-formation': D1TeamFormationTool,
+  'd2-problem-definition': D2ProblemDefinitionTool,
+  'd3-containment': D3ContainmentTool,
+  'd4-root-cause': D4RootCauseTool,
+  'comparative-analysis': ComparativeAnalysisTool,
 };
 
 interface ToolRendererProps {
