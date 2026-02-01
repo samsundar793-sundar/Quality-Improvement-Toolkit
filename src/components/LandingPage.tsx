@@ -1,8 +1,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, TrendingUp, Target, Settings, FileSpreadsheet, LineChart as LineChartIcon } from "lucide-react";
+import { 
+  BarChart3, TrendingUp, Target, Settings, FileSpreadsheet, LineChart as LineChartIcon,
+  Lightbulb, Compass, PackageCheck, ClipboardCheck, AlertTriangle, Leaf, Zap, RefreshCw
+} from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import logo from "@/assets/logo.png";
 
 const sampleData = [
   { name: 'Week 1', defects: 45, target: 30 },
@@ -21,11 +25,15 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   const methodologies = [
-    { name: "DMAIC", description: "Define, Measure, Analyze, Improve, Control" },
-    { name: "8D", description: "8 Disciplines Problem Solving" },
-    { name: "APQP", description: "Advanced Product Quality Planning" },
-    { name: "Lean", description: "Lean Improvement Cycle" },
-    { name: "Kaizen", description: "Continuous Improvement" },
+    { name: "DMAIC", description: "Define, Measure, Analyze, Improve, Control", icon: TrendingUp },
+    { name: "DMADV", description: "Design for Six Sigma", icon: Lightbulb },
+    { name: "DMEDI", description: "Define, Measure, Explore, Develop, Implement", icon: Compass },
+    { name: "APQP", description: "Advanced Product Quality Planning", icon: PackageCheck },
+    { name: "PPAP", description: "Production Part Approval Process", icon: ClipboardCheck },
+    { name: "8D", description: "8 Disciplines Problem Solving", icon: AlertTriangle },
+    { name: "Lean", description: "Lean Manufacturing", icon: Leaf },
+    { name: "Kaizen", description: "Continuous Improvement", icon: Zap },
+    { name: "PDCA", description: "Plan, Do, Check, Act", icon: RefreshCw },
   ];
 
   const features = [
@@ -74,6 +82,9 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
         <div className="hero-gradient absolute inset-0 opacity-90" />
         <div className="relative z-10 container mx-auto px-4 py-24">
           <div className="text-center max-w-4xl mx-auto">
+            <div className="flex justify-center mb-6">
+              <img src={logo} alt="SixSigma Spark Logo" className="h-24 w-24 md:h-32 md:w-32 animate-fade-in" />
+            </div>
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 animate-fade-in">
               Quality Improvement
               <span className="block bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
@@ -106,13 +117,22 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
       </div>
 
       {/* Methodologies Bar */}
-      <div className="py-8 bg-muted/50 border-b">
+      <div className="py-10 bg-muted/50 border-b">
         <div className="container mx-auto px-4">
-          <div className="flex flex-wrap justify-center gap-4">
+          <h3 className="text-center text-sm font-medium text-muted-foreground mb-6 uppercase tracking-wider">
+            Supported Methodologies
+          </h3>
+          <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-4">
             {methodologies.map((m, index) => (
-              <div key={index} className="text-center px-4 py-2">
-                <span className="font-bold text-primary">{m.name}</span>
-                <span className="text-xs text-muted-foreground block">{m.description}</span>
+              <div 
+                key={index} 
+                className="flex flex-col items-center text-center p-3 rounded-lg hover:bg-background/50 transition-colors cursor-default group"
+              >
+                <div className="p-3 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors mb-2">
+                  <m.icon className="h-6 w-6 text-primary" />
+                </div>
+                <span className="font-bold text-primary text-sm">{m.name}</span>
+                <span className="text-xs text-muted-foreground line-clamp-2">{m.description}</span>
               </div>
             ))}
           </div>
