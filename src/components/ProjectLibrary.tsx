@@ -130,14 +130,14 @@ export function ProjectLibrary({ onClose, onProjectSelected }: ProjectLibraryPro
                 New Project
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+            <DialogContent className="max-w-3xl">
               <DialogHeader>
                 <DialogTitle>Create New Project</DialogTitle>
                 <DialogDescription>
                   Start a new quality improvement project with your preferred methodologies
                 </DialogDescription>
               </DialogHeader>
-              <div className="space-y-4 py-4 flex-1 overflow-hidden flex flex-col min-h-0">
+              <div className="space-y-4 py-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Project Name</label>
                   <Input
@@ -155,13 +155,13 @@ export function ProjectLibrary({ onClose, onProjectSelected }: ProjectLibraryPro
                     rows={2}
                   />
                 </div>
-                <div className="space-y-2 flex-1 overflow-hidden flex flex-col min-h-0">
+                <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <label className="text-sm font-medium">Select Methodologies ({selectedMethodologies.length} selected)</label>
                     <Badge variant="secondary">{METHODOLOGIES.length} available</Badge>
                   </div>
                   <p className="text-xs text-muted-foreground">Choose one or more methodologies for this project</p>
-                  <ScrollArea className="flex-1 border rounded-lg p-3 min-h-[300px] max-h-[400px]">
+                  <div className="border rounded-lg p-3 h-[320px] overflow-y-auto">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {METHODOLOGIES.map(methodology => {
                         const isSelected = selectedMethodologies.includes(methodology.id);
@@ -201,7 +201,7 @@ export function ProjectLibrary({ onClose, onProjectSelected }: ProjectLibraryPro
                         );
                       })}
                     </div>
-                  </ScrollArea>
+                  </div>
                 </div>
               </div>
               <DialogFooter>
