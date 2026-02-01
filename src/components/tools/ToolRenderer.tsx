@@ -59,7 +59,16 @@ const D1TeamFormationTool = lazy(() => import("./D1TeamFormationTool").then(m =>
 const D2ProblemDefinitionTool = lazy(() => import("./D2ProblemDefinitionTool").then(m => ({ default: m.D2ProblemDefinitionTool })));
 const D3ContainmentTool = lazy(() => import("./D3ContainmentTool").then(m => ({ default: m.D3ContainmentTool })));
 const D4RootCauseTool = lazy(() => import("./D4RootCauseTool").then(m => ({ default: m.D4RootCauseTool })));
+const D5CorrectiveActionTool = lazy(() => import("./D5CorrectiveActionTool"));
+const D6ImplementVerifyTool = lazy(() => import("./D6ImplementVerifyTool"));
+const D7PreventRecurrenceTool = lazy(() => import("./D7PreventRecurrenceTool"));
+const D8TeamRecognitionTool = lazy(() => import("./D8TeamRecognitionTool"));
 const ComparativeAnalysisTool = lazy(() => import("./ComparativeAnalysisTool").then(m => ({ default: m.ComparativeAnalysisTool })));
+// PPAP, APQP, A3, PDCA tools
+const PPAPChecklistTool = lazy(() => import("./PPAPChecklistTool"));
+const APQPPhaseTool = lazy(() => import("./APQPPhaseTool"));
+const A3ReportTool = lazy(() => import("./A3ReportTool"));
+const PDCACycleTool = lazy(() => import("./PDCACycleTool"));
 
 // Tool component mapping
 const TOOL_COMPONENTS: Record<string, React.LazyExoticComponent<React.ComponentType<any>>> = {
@@ -119,7 +128,16 @@ const TOOL_COMPONENTS: Record<string, React.LazyExoticComponent<React.ComponentT
   'd2-problem-definition': D2ProblemDefinitionTool,
   'd3-containment': D3ContainmentTool,
   'd4-root-cause': D4RootCauseTool,
+  'd5-corrective-action': D5CorrectiveActionTool,
+  'd6-implement-verify': D6ImplementVerifyTool,
+  'd7-prevent-recurrence': D7PreventRecurrenceTool,
+  'd8-team-recognition': D8TeamRecognitionTool,
   'comparative-analysis': ComparativeAnalysisTool,
+  // PPAP, APQP, A3, PDCA tools
+  'ppap-checklist': PPAPChecklistTool,
+  'apqp-phase': APQPPhaseTool,
+  'a3-report': A3ReportTool,
+  'pdca-cycle': PDCACycleTool,
 };
 
 interface ToolRendererProps {
