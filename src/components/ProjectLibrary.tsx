@@ -130,14 +130,14 @@ export function ProjectLibrary({ onClose, onProjectSelected }: ProjectLibraryPro
                 New Project
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-w-3xl max-h-[85vh] flex flex-col">
               <DialogHeader>
                 <DialogTitle>Create New Project</DialogTitle>
                 <DialogDescription>
                   Start a new quality improvement project with your preferred methodologies
                 </DialogDescription>
               </DialogHeader>
-              <div className="space-y-4 py-4">
+              <div className="space-y-4 py-4 overflow-y-auto flex-1 min-h-0">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Project Name</label>
                   <Input
