@@ -161,7 +161,7 @@ export function ProjectLibrary({ onClose, onProjectSelected }: ProjectLibraryPro
                     <Badge variant="secondary">{METHODOLOGIES.length} available</Badge>
                   </div>
                   <p className="text-xs text-muted-foreground">Choose one or more methodologies for this project</p>
-                  <div className="border rounded-lg p-3 h-[320px] overflow-y-auto">
+                  <div className="border rounded-lg p-3">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {METHODOLOGIES.map(methodology => {
                         const isSelected = selectedMethodologies.includes(methodology.id);
