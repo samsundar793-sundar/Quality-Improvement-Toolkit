@@ -555,6 +555,13 @@ export const TOOL_REGISTRY: Record<string, ToolDefinition> = {
     icon: CheckCircle,
     category: 'control'
   },
+  'production-trial': {
+    id: 'production-trial',
+    title: 'Production Trial Run',
+    description: 'Document production trial results',
+    icon: Factory,
+    category: 'measurement'
+  },
 };
 
 // ============= METHODOLOGY DEFINITIONS =============
