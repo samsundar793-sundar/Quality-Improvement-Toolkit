@@ -130,7 +130,7 @@ export function ProjectLibrary({ onClose, onProjectSelected }: ProjectLibraryPro
                 New Project
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-3xl">
+            <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Create New Project</DialogTitle>
                 <DialogDescription>
