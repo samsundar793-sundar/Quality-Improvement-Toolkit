@@ -33,7 +33,6 @@ const SOPTemplateTool = lazy(() => import("./SOPTemplateTool").then(m => ({ defa
 const PokaYokeTool = lazy(() => import("./PokaYokeTool").then(m => ({ default: m.PokaYokeTool })));
 const AuditChecklistTool = lazy(() => import("./AuditChecklistTool").then(m => ({ default: m.AuditChecklistTool })));
 const MonitoringDashboardTool = lazy(() => import("./MonitoringDashboardTool").then(m => ({ default: m.MonitoringDashboardTool })));
-// New methodology tools
 const ProblemStatementTool = lazy(() => import("./ProblemStatementTool").then(m => ({ default: m.ProblemStatementTool })));
 const TeamCharterTool = lazy(() => import("./TeamCharterTool").then(m => ({ default: m.TeamCharterTool })));
 const ValueStreamMapTool = lazy(() => import("./ValueStreamMapTool").then(m => ({ default: m.ValueStreamMapTool })));
@@ -42,7 +41,6 @@ const FiveS_AuditTool = lazy(() => import("./FiveS_AuditTool").then(m => ({ defa
 const BrainstormingTool = lazy(() => import("./BrainstormingTool").then(m => ({ default: m.BrainstormingTool })));
 const ImplementationPlanTool = lazy(() => import("./ImplementationPlanTool").then(m => ({ default: m.ImplementationPlanTool })));
 const LessonsLearnedTool = lazy(() => import("./LessonsLearnedTool").then(m => ({ default: m.LessonsLearnedTool })));
-// Additional tools
 const RunChartTool = lazy(() => import("./RunChartTool").then(m => ({ default: m.RunChartTool })));
 const HypothesisTestingTool = lazy(() => import("./HypothesisTestingTool").then(m => ({ default: m.HypothesisTestingTool })));
 const IsIsNotTool = lazy(() => import("./IsIsNotTool").then(m => ({ default: m.IsIsNotTool })));
@@ -51,7 +49,6 @@ const HandoffPlanTool = lazy(() => import("./HandoffPlanTool").then(m => ({ defa
 const ResponsePlanTool = lazy(() => import("./ResponsePlanTool").then(m => ({ default: m.ResponsePlanTool })));
 const StandardWorkTool = lazy(() => import("./StandardWorkTool").then(m => ({ default: m.StandardWorkTool })));
 const ProcessFlowTool = lazy(() => import("./ProcessFlowTool").then(m => ({ default: m.ProcessFlowTool })));
-// FMEA and 8D tools
 const DesignFMEATool = lazy(() => import("./DesignFMEATool").then(m => ({ default: m.DesignFMEATool })));
 const ProcessFMEATool = lazy(() => import("./ProcessFMEATool").then(m => ({ default: m.ProcessFMEATool })));
 const D0SymptomsTool = lazy(() => import("./D0SymptomsTool").then(m => ({ default: m.D0SymptomsTool })));
@@ -64,11 +61,24 @@ const D6ImplementVerifyTool = lazy(() => import("./D6ImplementVerifyTool"));
 const D7PreventRecurrenceTool = lazy(() => import("./D7PreventRecurrenceTool"));
 const D8TeamRecognitionTool = lazy(() => import("./D8TeamRecognitionTool"));
 const ComparativeAnalysisTool = lazy(() => import("./ComparativeAnalysisTool").then(m => ({ default: m.ComparativeAnalysisTool })));
-// PPAP, APQP, A3, PDCA tools
 const PPAPChecklistTool = lazy(() => import("./PPAPChecklistTool"));
 const APQPPhaseTool = lazy(() => import("./APQPPhaseTool"));
 const A3ReportTool = lazy(() => import("./A3ReportTool"));
 const PDCACycleTool = lazy(() => import("./PDCACycleTool"));
+// New missing tools
+const QFDTool = lazy(() => import("./QFDTool").then(m => ({ default: m.QFDTool })));
+const DesignScorecardTool = lazy(() => import("./DesignScorecardTool").then(m => ({ default: m.DesignScorecardTool })));
+const ConceptGenerationTool = lazy(() => import("./ConceptGenerationTool").then(m => ({ default: m.ConceptGenerationTool })));
+const ConceptSelectionTool = lazy(() => import("./ConceptSelectionTool").then(m => ({ default: m.ConceptSelectionTool })));
+const ToleranceAnalysisTool = lazy(() => import("./ToleranceAnalysisTool").then(m => ({ default: m.ToleranceAnalysisTool })));
+const DesignVerificationTool = lazy(() => import("./DesignVerificationTool").then(m => ({ default: m.DesignVerificationTool })));
+const DesignValidationTool = lazy(() => import("./DesignValidationTool").then(m => ({ default: m.DesignValidationTool })));
+const DesignReviewTool = lazy(() => import("./DesignReviewTool").then(m => ({ default: m.DesignReviewTool })));
+const MSATool = lazy(() => import("./MSATool").then(m => ({ default: m.MSATool })));
+const SampleSubmissionTool = lazy(() => import("./SampleSubmissionTool").then(m => ({ default: m.SampleSubmissionTool })));
+const DimensionalResultsTool = lazy(() => import("./DimensionalResultsTool").then(m => ({ default: m.DimensionalResultsTool })));
+const MaterialTestTool = lazy(() => import("./MaterialTestTool").then(m => ({ default: m.MaterialTestTool })));
+const ProductionTrialTool = lazy(() => import("./ProductionTrialTool").then(m => ({ default: m.ProductionTrialTool })));
 
 // Tool component mapping
 const TOOL_COMPONENTS: Record<string, React.LazyExoticComponent<React.ComponentType<any>>> = {
@@ -102,7 +112,6 @@ const TOOL_COMPONENTS: Record<string, React.LazyExoticComponent<React.ComponentT
   'poka-yoke': PokaYokeTool,
   'audit-checklist': AuditChecklistTool,
   'monitoring-dashboard': MonitoringDashboardTool,
-  // New tools
   'problem-statement': ProblemStatementTool,
   'team-charter': TeamCharterTool,
   'value-stream-map': ValueStreamMapTool,
@@ -111,7 +120,6 @@ const TOOL_COMPONENTS: Record<string, React.LazyExoticComponent<React.ComponentT
   'brainstorming': BrainstormingTool,
   'implementation-plan': ImplementationPlanTool,
   'lessons-learned': LessonsLearnedTool,
-  // Additional tools
   'run-chart': RunChartTool,
   'hypothesis-testing': HypothesisTestingTool,
   'is-is-not': IsIsNotTool,
@@ -120,24 +128,37 @@ const TOOL_COMPONENTS: Record<string, React.LazyExoticComponent<React.ComponentT
   'response-plan': ResponsePlanTool,
   'standard-work': StandardWorkTool,
   'process-flow': ProcessFlowTool,
-  // FMEA and 8D tools
   'design-fmea': DesignFMEATool,
   'process-fmea': ProcessFMEATool,
+  // 8D tools - fixed ID mapping to match methodology definitions
   'd0-symptoms': D0SymptomsTool,
   'd1-team-formation': D1TeamFormationTool,
   'd2-problem-definition': D2ProblemDefinitionTool,
   'd3-containment': D3ContainmentTool,
   'd4-root-cause': D4RootCauseTool,
-  'd5-corrective-action': D5CorrectiveActionTool,
-  'd6-implement-verify': D6ImplementVerifyTool,
-  'd7-prevent-recurrence': D7PreventRecurrenceTool,
-  'd8-team-recognition': D8TeamRecognitionTool,
+  'd5-corrective-actions': D5CorrectiveActionTool,
+  'd6-implementation': D6ImplementVerifyTool,
+  'd7-prevention': D7PreventRecurrenceTool,
+  'd8-recognition': D8TeamRecognitionTool,
   'comparative-analysis': ComparativeAnalysisTool,
-  // PPAP, APQP, A3, PDCA tools
   'ppap-checklist': PPAPChecklistTool,
   'apqp-phase': APQPPhaseTool,
   'a3-report': A3ReportTool,
   'pdca-cycle': PDCACycleTool,
+  // New tools - DMADV, PPAP, APQP specific
+  'qfd': QFDTool,
+  'design-scorecard': DesignScorecardTool,
+  'concept-generation': ConceptGenerationTool,
+  'concept-selection': ConceptSelectionTool,
+  'tolerance-analysis': ToleranceAnalysisTool,
+  'design-verification': DesignVerificationTool,
+  'design-validation': DesignValidationTool,
+  'design-review': DesignReviewTool,
+  'measurement-system-analysis': MSATool,
+  'sample-submission': SampleSubmissionTool,
+  'dimensional-results': DimensionalResultsTool,
+  'material-test': MaterialTestTool,
+  'production-trial': ProductionTrialTool,
 };
 
 interface ToolRendererProps {
