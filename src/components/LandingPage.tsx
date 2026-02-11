@@ -6,7 +6,7 @@ import {
   Lightbulb, Compass, PackageCheck, ClipboardCheck, AlertTriangle, Leaf, Zap, RefreshCw
 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import logo from "@/assets/logo.png";
+
 
 const sampleData = [
   { name: 'Week 1', defects: 45, target: 30 },
@@ -82,9 +82,6 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
         <div className="hero-gradient absolute inset-0 opacity-90" />
         <div className="relative z-10 container mx-auto px-4 py-24">
           <div className="text-center max-w-4xl mx-auto">
-            <div className="flex justify-center mb-6">
-              <img src={logo} alt="SixSigma Spark Logo" className="h-24 w-24 md:h-32 md:w-32 animate-fade-in" />
-            </div>
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 animate-fade-in">
               Quality Improvement
               <span className="block bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
