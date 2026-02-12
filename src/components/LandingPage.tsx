@@ -45,7 +45,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
     },
     {
       icon: BarChart3,
-      title: "60+ Professional Tools", 
+      title: "75+ Professional Tools", 
       description: "From Project Charter to Control Plans, every tool you need for quality improvement.",
       tools: "Extensive"
     },
@@ -105,8 +105,15 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
               >
                 Get Started
               </Button>
-              <Button variant="outline" size="xl" className="border-white/30 text-white hover:bg-white/10">
-                View Sample Tools
+              <Button 
+                variant="outline" 
+                size="xl" 
+                className="border-white/30 text-white hover:bg-white/10"
+                onClick={() => {
+                  document.getElementById('features-section')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
+                Explore Features
               </Button>
             </div>
           </div>
@@ -137,14 +144,14 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
       </div>
 
       {/* Features Grid */}
-      <div className="py-24 bg-background">
+      <div id="features-section" className="py-24 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-foreground mb-4">
               Complete Quality Management Suite
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              9 methodologies, 60+ tools, unlimited projects - everything for quality excellence
+              9 methodologies, 75+ tools, unlimited projects — everything for quality excellence
             </p>
           </div>
           

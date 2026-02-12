@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, FolderOpen, Download, Save } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { ArrowLeft, FolderOpen, Download, Save, CheckCircle, StickyNote, X } from "lucide-react";
 import { useProject } from "@/contexts/ProjectContext";
 import { ProjectLibrary } from "@/components/ProjectLibrary";
 import { MethodologySelector } from "@/components/MethodologySelector";
@@ -17,6 +18,8 @@ interface QualityToolkitProps {
 
 export function QualityToolkit({ onBackToLanding }: QualityToolkitProps) {
   const [showProjectLibrary, setShowProjectLibrary] = useState(false);
+  const [showNotes, setShowNotes] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const { currentProject, exportProject, updateProjectInfo } = useProject();
   
   const currentMethodologyId = currentProject?.currentMethodology || 'dmaic';
@@ -30,10 +33,11 @@ export function QualityToolkit({ onBackToLanding }: QualityToolkitProps) {
     }
   }, [currentMethodologyId, methodology, activePhase]);
 
-  // Save current phase to project
+  // Save current phase to project & track save time
   useEffect(() => {
     if (currentProject && activePhase !== currentProject.currentPhase) {
       updateProjectInfo({ currentPhase: activePhase });
+      setLastSaved(new Date());
     }
   }, [activePhase]);
 
@@ -102,6 +106,15 @@ export function QualityToolkit({ onBackToLanding }: QualityToolkitProps) {
                     <Button
                       variant="outline"
                       size="sm"
+                      onClick={() => setShowNotes(!showNotes)}
+                      className="gap-2"
+                    >
+                      <StickyNote className="h-4 w-4" />
+                      Notes
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={exportProject}
                       className="gap-2"
                     >
@@ -122,11 +135,44 @@ export function QualityToolkit({ onBackToLanding }: QualityToolkitProps) {
                 <Badge variant="outline" className="text-primary">
                   {toolCount} Tools
                 </Badge>
+                {lastSaved && (
+                  <span className="text-xs text-muted-foreground flex items-center gap-1">
+                    <CheckCircle className="h-3 w-3 text-success" />
+                    Saved
+                  </span>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Project Notes Panel */}
+      {showNotes && currentProject && (
+        <div className="border-b border-border bg-card/80">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <StickyNote className="h-4 w-4 text-primary" />
+                Project Notes
+              </h3>
+              <Button variant="ghost" size="icon" onClick={() => setShowNotes(false)} className="h-6 w-6">
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            <Textarea
+              value={currentProject.notes || ''}
+              onChange={(e) => {
+                updateProjectInfo({ notes: e.target.value });
+                setLastSaved(new Date());
+              }}
+              placeholder="Add project notes, observations, decisions..."
+              rows={3}
+              className="resize-y text-sm"
+            />
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
