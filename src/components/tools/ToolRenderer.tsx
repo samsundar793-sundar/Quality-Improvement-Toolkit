@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Wrench } from "lucide-react";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 // Lazy load existing tool components
 const ProjectCharterTool = lazy(() => import("./ProjectCharterTool").then(m => ({ default: m.ProjectCharterTool })));
@@ -174,9 +175,11 @@ export function ToolRenderer({ toolId, toolName }: ToolRendererProps) {
   }
 
   return (
-    <Suspense fallback={<LoadingTool />}>
-      <ToolComponent />
-    </Suspense>
+    <ErrorBoundary fallbackTitle={`Error in ${toolName}`}>
+      <Suspense fallback={<LoadingTool />}>
+        <ToolComponent />
+      </Suspense>
+    </ErrorBoundary>
   );
 }
 
